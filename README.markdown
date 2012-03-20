@@ -1,4 +1,3 @@
-
 XML AutoBean Framework
 =============
 
@@ -6,17 +5,15 @@ XML AutoBean Framework
 Introduction
 -------------------
 
+AutoBean is a framework for configuring autowire beans using XML.
 
-Using it from Maven
+Example
 -------------------
 
-
-Configuring the XML
--------------------
-
-
-The Java
--------------------
-
-
+	final AutowireBeanRegistry dynabeanRegistry = new DefaultAutowireBeanRegistry();
+	dynabeanRegistry.load(inputStream);
+	/*
+	 * populate the beans we need
+	 */
+	jcrPersistenceContext = (JcrPersistenceContext) dynabeanRegistry.getBean("jcrpersistencecontext");
 
