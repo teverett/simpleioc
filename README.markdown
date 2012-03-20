@@ -1,4 +1,3 @@
-
 XML AutoBean Framework
 =============
 
@@ -6,17 +5,8 @@ XML AutoBean Framework
 Introduction
 -------------------
 
+AutoBean is a framework for configuring autowire beans using XML.
 
-Using it from Maven
--------------------
-
-
-Configuring the XML
--------------------
-
-
-The Java
--------------------
 
 
 
