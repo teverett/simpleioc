@@ -22,6 +22,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.beanutils.ConstructorUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.khubla.xmlautobeans.AutowireBeanRegistry;
 import com.khubla.xmlautobeans.exception.AutowireBeanRegistryException;
@@ -36,7 +38,10 @@ import com.khubla.xmlautobeans.xml.Beans;
  * 
  */
 public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
-
+	/**
+	 * log
+	 */
+	private Log log = LogFactory.getLog(DefaultAutowireBeanRegistry.class);
 	/**
 	 * default bean file
 	 */
@@ -94,6 +99,7 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 	 */
 	private Object instantiateBean(Bean bean) throws AutowireBeanRegistryException {
 		try {
+			log.info("instanting bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
 			/*
 			 * collect the arguments
 			 */
@@ -147,6 +153,7 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 
 	public void load() throws AutowireBeanRegistryException {
 		try {
+			log.info("Loading autobeans from " + DEFAULT_BEAN_FILE);
 			InputStream inputStream = DefaultAutowireBeanRegistry.class.getResourceAsStream(DEFAULT_BEAN_FILE);
 			if (null != inputStream) {
 				load(inputStream);
@@ -193,6 +200,7 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 				final String key = enumer.nextElement();
 				final Bean bean = beanDefinitions.get(key);
 				if (bean.isAutocreate()) {
+					log.info("preinstanting bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
 					instantiateBean(bean);
 				}
 			}
