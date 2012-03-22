@@ -24,5 +24,13 @@
 			</argument>
 		</arguments>
 	</bean>
+	<bean name="iii" autocreate="true" cache="false">
+		<class>java.lang.Integer</class>
+		<arguments>
+			<argument valuetype="int">
+				<value>40</value>
+			</argument>
+		</arguments>
+	</bean>
 </beans>
 

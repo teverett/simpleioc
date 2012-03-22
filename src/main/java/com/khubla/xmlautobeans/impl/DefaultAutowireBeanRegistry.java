@@ -123,7 +123,26 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 							throw new AutowireBeanRegistryException("Unable to find argument named '" + arg.getValue() + "' for bean '" + bean.getName() + "'");
 						}
 					} else {
+						/*
+						 * argument is a value type
+						 */
 						arguments[i] = arg.getValue();
+						/*
+						 * convert
+						 */
+						if (null != arg.getValuetype()) {
+							if (arg.getValuetype().compareTo("byte") == 0) {
+								arguments[i] = Byte.parseByte((String) arguments[i]);
+							} else if (arg.getValuetype().compareTo("int") == 0) {
+								arguments[i] = Integer.parseInt((String) arguments[i]);
+							} else if (arg.getValuetype().compareTo("long") == 0) {
+								arguments[i] = Long.parseLong((String) arguments[i]);
+							} else if (arg.getValuetype().compareTo("float") == 0) {
+								arguments[i] = Float.parseFloat((String) arguments[i]);
+							} else if (arg.getValuetype().compareTo("double") == 0) {
+								arguments[i] = Double.parseDouble((String) arguments[i]);
+							}
+						}
 					}
 				}
 			}

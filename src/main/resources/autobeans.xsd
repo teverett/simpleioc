@@ -15,8 +15,8 @@
 				<xs:element ref="arguments" maxOccurs="1" minOccurs="0" />
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" />
-			<xs:attribute name="autocreate" type="xs:boolean" default="false"/>
-			<xs:attribute name="cache" type="xs:boolean" default="false"/>
+			<xs:attribute name="autocreate" type="xs:boolean" default="false" />
+			<xs:attribute name="cache" type="xs:boolean" default="false" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="arguments">
@@ -31,8 +31,21 @@
 			<xs:sequence>
 				<xs:element name="value" type="xs:string" maxOccurs="1" minOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="reference" type="xs:boolean" default="false"/>
+			<xs:attribute name="reference" type="xs:boolean" default="false" />
 			<xs:attribute name="name" type="xs:string" />
+			<xs:attribute name="valuetype">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="string" />
+						<xs:enumeration value="byte" />
+						<xs:enumeration value="double" />
+						<xs:enumeration value="int" />
+						<xs:enumeration value="long" />
+						<xs:enumeration value="float" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
+
 </xs:schema>
