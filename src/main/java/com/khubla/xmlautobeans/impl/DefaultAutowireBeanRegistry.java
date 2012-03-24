@@ -31,6 +31,7 @@ import com.khubla.xmlautobeans.xml.Argument;
 import com.khubla.xmlautobeans.xml.AutowireBeanRegistryXMLMarshaller;
 import com.khubla.xmlautobeans.xml.Bean;
 import com.khubla.xmlautobeans.xml.Beans;
+import com.khubla.xmlautobeans.xml.Include;
 
 /**
  * 
@@ -41,7 +42,7 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 	/**
 	 * log
 	 */
-	private Log log = LogFactory.getLog(DefaultAutowireBeanRegistry.class);
+	private final Log log = LogFactory.getLog(DefaultAutowireBeanRegistry.class);
 	/**
 	 * default bean file
 	 */
@@ -54,7 +55,7 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 	/**
 	 * bean definitions
 	 */
-	private Hashtable<String, Bean> beanDefinitions = null;
+	private final Hashtable<String, Bean> beanDefinitions = new Hashtable<String, Bean>();
 
 	public Object getBean(String name) throws AutowireBeanRegistryException {
 		try {
@@ -89,6 +90,17 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 		} catch (final Exception e) {
 			throw new AutowireBeanRegistryException("Exception in get", e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getBean(String name, Class<T> clazz) throws AutowireBeanRegistryException {
+		final Object o = this.getBean(name);
+		if (null != o) {
+			if (o.getClass() == clazz) {
+				return (T) o;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -170,18 +182,11 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 
 	}
 
+	/**
+	 * default loader
+	 */
 	public void load() throws AutowireBeanRegistryException {
-		try {
-			log.info("Loading autobeans from " + DEFAULT_BEAN_FILE);
-			InputStream inputStream = DefaultAutowireBeanRegistry.class.getResourceAsStream(DEFAULT_BEAN_FILE);
-			if (null != inputStream) {
-				load(inputStream);
-			} else {
-				throw new Exception("Unable to find '" + DEFAULT_BEAN_FILE + "'");
-			}
-		} catch (Exception e) {
-			throw new AutowireBeanRegistryException("Exception in load", e);
-		}
+		load(DEFAULT_BEAN_FILE);
 	}
 
 	public void load(InputStream inputStream) throws AutowireBeanRegistryException {
@@ -191,7 +196,9 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 			 */
 			final Beans beans = AutowireBeanRegistryXMLMarshaller.unmarshall(inputStream);
 			if (null != beans) {
-				beanDefinitions = new Hashtable<String, Bean>();
+				/*
+				 * beans
+				 */
 				final List<Bean> lst = beans.getBean();
 				if ((null != lst) && (lst.size() > 0)) {
 					for (int i = 0; i < lst.size(); i++) {
@@ -199,11 +206,41 @@ public class DefaultAutowireBeanRegistry implements AutowireBeanRegistry {
 						beanDefinitions.put(bean.getName().trim(), bean);
 					}
 				}
+				/*
+				 * includes
+				 */
+				final List<Include> lst2 = beans.getInclude();
+				if ((null != lst2) && (lst2.size() > 0)) {
+					for (int i = 0; i < lst2.size(); i++) {
+						final Include include = lst2.get(i);
+						/*
+						 * recurse
+						 */
+						this.load("/" + include.getPath());
+					}
+				}
 			}
 			/*
 			 * autocreate
 			 */
 			preInstantiateBeans();
+		} catch (final Exception e) {
+			throw new AutowireBeanRegistryException("Exception in load", e);
+		}
+	}
+
+	/**
+	 * load from resource
+	 */
+	public void load(String resourceName) throws AutowireBeanRegistryException {
+		try {
+			log.info("Loading autobeans from " + resourceName);
+			final InputStream inputStream = DefaultAutowireBeanRegistry.class.getResourceAsStream(resourceName);
+			if (null != inputStream) {
+				load(inputStream);
+			} else {
+				throw new Exception("Unable to find '" + resourceName + "'");
+			}
 		} catch (final Exception e) {
 			throw new AutowireBeanRegistryException("Exception in load", e);
 		}

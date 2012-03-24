@@ -17,6 +17,7 @@ package com.khubla.xmlautobeans;
  */
 
 import java.io.File;
+import java.io.InputStream;
 
 import junit.framework.Assert;
 
@@ -31,6 +32,9 @@ import com.khubla.xmlautobeans.impl.DefaultAutowireBeanRegistry;
  */
 public class TestAutowireBeanRegistry {
 
+	/**
+	 * a very basic test
+	 */
 	@Test
 	public void test1() {
 		try {
@@ -38,9 +42,47 @@ public class TestAutowireBeanRegistry {
 			autobeanRegistry.load();
 			Assert.assertNotNull(autobeanRegistry);
 			Assert.assertNotNull(autobeanRegistry.getBean("jcrsessionfactory"));
-			File f = (File) autobeanRegistry.getBean("omfactory");
+			final File f = (File) autobeanRegistry.getBean("omfactory");
 			Assert.assertNotNull(f);
 			Assert.assertTrue(f.getPath().compareTo("target/repository") == 0);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	/**
+	 * a test of the include functionality
+	 */
+	@Test
+	public void test2() {
+		try {
+			final AutowireBeanRegistry autobeanRegistry = new DefaultAutowireBeanRegistry();
+			autobeanRegistry.load("/autobeans2.xml");
+			Assert.assertNotNull(autobeanRegistry);
+			Assert.assertNotNull(autobeanRegistry.getBean("jcrsessionfactory"));
+			final File f = (File) autobeanRegistry.getBean("omfactory");
+			Assert.assertNotNull(f);
+			Assert.assertTrue(f.getPath().compareTo("target/repository") == 0);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	/**
+	 * a test which checks types
+	 */
+	@Test
+	public void test3() {
+		try {
+			final AutowireBeanRegistry autobeanRegistry = new DefaultAutowireBeanRegistry();
+			autobeanRegistry.load();
+			Assert.assertNotNull(autobeanRegistry);
+			final File f = autobeanRegistry.getBean("jcrsessionfactory", File.class);
+			Assert.assertNotNull(f);
+			final InputStream is = autobeanRegistry.getBean("jcrsessionfactory", InputStream.class);
+			Assert.assertNull(is);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Assert.fail();

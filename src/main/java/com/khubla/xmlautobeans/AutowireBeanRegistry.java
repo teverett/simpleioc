@@ -32,12 +32,22 @@ public interface AutowireBeanRegistry {
 	Object getBean(String name) throws AutowireBeanRegistryException;
 
 	/**
-	 * load
+	 * get a bean
 	 */
-	void load(InputStream inputStream) throws AutowireBeanRegistryException;
+	<T> T getBean(String name, Class<T> clazz) throws AutowireBeanRegistryException;
 
 	/**
 	 * load from default class path resource "autobeans.xml"
 	 */
 	void load() throws AutowireBeanRegistryException;
+
+	/**
+	 * load
+	 */
+	void load(InputStream inputStream) throws AutowireBeanRegistryException;
+
+	/**
+	 * load from class path resource
+	 */
+	void load(String resourceName) throws AutowireBeanRegistryException;
 }
