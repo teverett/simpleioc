@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="7339" started-at="2012-03-28T13:53:56Z" finished-at="2012-03-28T13:54:03Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="7339" started-at="2012-03-28T13:53:56Z" finished-at="2012-03-28T13:54:03Z">
+      <class name="com.khubla.simpleioc.proxy.TestProxyCreatingFilter">
+        <test-method status="PASS" signature="test1()[pri:0, instance:com.khubla.simpleioc.proxy.TestProxyCreatingFilter@5567d7fb]" name="test1" duration-ms="7327" started-at="2012-03-28T13:53:56Z" finished-at="2012-03-28T13:54:03Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

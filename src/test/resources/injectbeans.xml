@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<beans xmlns="http://org.om.dynabean">
+	<!-- note that the inject is in here before the injected to ensure that out of order beans works -->
+	<bean name="sampleInjectObject" autocreate="true" cache="false">
+		<class>com.khubla.simpleioc.jsr330.SampleInjectObject</class>
+	</bean>
+	<bean name="sampleInjectedInterface" autocreate="true" cache="false">
+		<class>com.khubla.simpleioc.jsr330.SampleInjectedObject</class>
+	</bean>
+	<bean name="fuddleduddle" autocreate="true" cache="false">
+		<class>com.khubla.simpleioc.jsr330.SampleInjectedObject</class>
+	</bean>
+</beans>
+
