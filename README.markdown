@@ -1,19 +1,19 @@
-XML AutoBean Framework
+Simple IOC
 =============
 
 
 Introduction
 -------------------
 
-AutoBean is a framework for configuring autowire beans using XML.
+SimpleIOC is a framework for configuring autowire (JSR330) beans using XML.
 
 Example
 -------------------
 
-	final AutowireBeanRegistry dynabeanRegistry = new DefaultAutowireBeanRegistry();
-	dynabeanRegistry.load(inputStream);
+	final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
+	autobeanRegistry.load(inputStream);
 	/*
 	 * populate the beans we need
 	 */
-	jcrPersistenceContext = (JcrPersistenceContext) dynabeanRegistry.getBean("jcrpersistencecontext");
+	jcrPersistenceContext = (JcrPersistenceContext) autobeanRegistry.getBean("jcrpersistencecontext");
 
