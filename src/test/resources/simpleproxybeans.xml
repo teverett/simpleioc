@@ -11,7 +11,7 @@
 		<class>com.khubla.simpleioc.jsr330.SampleInjectedObject</class>
 	</bean>
 	<filter>
-		<class>com.khubla.simpleioc.filter.impl.JSR330Filter</class>	
+		<class>com.khubla.simpleioc.proxy.ExampleProxyCreatingFilter</class>	
 	</filter>
 </beans>
 

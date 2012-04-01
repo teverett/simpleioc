@@ -38,7 +38,7 @@ public class TestIOCBeanRegistry {
 	public void test1() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-			autobeanRegistry.load(null);
+			autobeanRegistry.load();
 			Assert.assertNotNull(autobeanRegistry);
 			Assert.assertNotNull(autobeanRegistry.getBean("jcrsessionfactory"));
 			final File f = (File) autobeanRegistry.getBean("omfactory");
@@ -57,7 +57,7 @@ public class TestIOCBeanRegistry {
 	public void test2() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-			autobeanRegistry.load("/autobeans2.xml", null);
+			autobeanRegistry.load("/autobeans2.xml");
 			Assert.assertNotNull(autobeanRegistry);
 			Assert.assertNotNull(autobeanRegistry.getBean("jcrsessionfactory"));
 			final File f = (File) autobeanRegistry.getBean("omfactory");
@@ -76,7 +76,7 @@ public class TestIOCBeanRegistry {
 	public void test3() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-			autobeanRegistry.load(null);
+			autobeanRegistry.load();
 			Assert.assertNotNull(autobeanRegistry);
 			final File f = autobeanRegistry.getBean("jcrsessionfactory", File.class);
 			Assert.assertNotNull(f);

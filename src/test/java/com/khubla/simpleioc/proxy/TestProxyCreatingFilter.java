@@ -31,10 +31,11 @@ public class TestProxyCreatingFilter {
 	public void test1() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-			autobeanRegistry.load("/injectbeans.xml", new ExampleProxyCreatingFilter());
+			autobeanRegistry.load("/simpleproxybeans.xml");
 			Assert.assertNotNull(autobeanRegistry);
-			Assert.assertNotNull(autobeanRegistry.getBean("fuddleduddle"));
-			Assert.assertTrue(Proxy.isProxyClass(autobeanRegistry.getBean("fuddleduddle").getClass()));
+			Object o = autobeanRegistry.getBean("fuddleduddle");
+			Assert.assertNotNull(o);
+			Assert.assertTrue(Proxy.isProxyClass(o.getClass()));
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Assert.fail();

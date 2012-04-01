@@ -18,7 +18,6 @@ package com.khubla.simpleioc;
 import java.io.InputStream;
 
 import com.khubla.simpleioc.exception.IOCException;
-import com.khubla.simpleioc.filter.IOCInstantiationFilter;
 
 /**
  * 
@@ -38,18 +37,18 @@ public interface IOCBeanRegistry {
 	<T> T getBean(String name, Class<T> clazz) throws IOCException;
 
 	/**
-	 * load
-	 */
-	void load(InputStream inputStream, IOCInstantiationFilter beanInstantiationFilter) throws IOCException;
-
-	/**
 	 * load from default class path resource "autobeans.xml"
 	 */
-	void load(IOCInstantiationFilter beanInstantiationFilter) throws IOCException;
+	void load() throws IOCException;
+
+	/**
+	 * load
+	 */
+	void load(InputStream inputStream) throws IOCException;
 
 	/**
 	 * load from class path resource
 	 */
-	void load(String resourceName, IOCInstantiationFilter beanInstantiationFilter) throws IOCException;
+	void load(String resourceName) throws IOCException;
 
 }

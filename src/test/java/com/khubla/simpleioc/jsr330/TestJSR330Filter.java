@@ -19,7 +19,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
-import com.khubla.simpleioc.filter.impl.JSR330Filter;
 import com.khubla.simpleioc.impl.DefaultIOCBeanRegistry;
 
 /**
@@ -35,7 +34,7 @@ public class TestJSR330Filter {
 	public void test1() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-			autobeanRegistry.load("/injectbeans.xml", new JSR330Filter());
+			autobeanRegistry.load("/injectbeans.xml");
 			Assert.assertNotNull(autobeanRegistry);
 			Assert.assertNotNull(autobeanRegistry.getBean("sampleInjectObject"));
 			final SampleInjectObject sio = (SampleInjectObject) autobeanRegistry.getBean("sampleInjectObject");

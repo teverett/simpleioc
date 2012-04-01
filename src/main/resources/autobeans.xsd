@@ -5,6 +5,7 @@
 			<xs:sequence>
 				<xs:element ref="bean" maxOccurs="unbounded" />
 				<xs:element ref="include" maxOccurs="unbounded" minOccurs="0" />
+				<xs:element ref="filter" maxOccurs="unbounded" minOccurs="0" />
 			</xs:sequence>
 			<xs:attribute name="version" type="xs:string" />
 		</xs:complexType>
@@ -13,6 +14,13 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="path" type="xs:string" maxOccurs="1" minOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="filter">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="class" type="xs:string" maxOccurs="1" minOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

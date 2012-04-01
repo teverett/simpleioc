@@ -17,8 +17,10 @@ package com.khubla.simpleioc.impl;
  */
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.beanutils.ConstructorUtils;
@@ -31,6 +33,7 @@ import com.khubla.simpleioc.filter.IOCInstantiationFilter;
 import com.khubla.simpleioc.xml.Argument;
 import com.khubla.simpleioc.xml.Bean;
 import com.khubla.simpleioc.xml.Beans;
+import com.khubla.simpleioc.xml.Filter;
 import com.khubla.simpleioc.xml.IOCBeanRegistryXMLMarshaller;
 import com.khubla.simpleioc.xml.Include;
 
@@ -59,15 +62,16 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 	private final Hashtable<String, Bean> beanDefinitions = new Hashtable<String, Bean>();
 
 	/**
-	 * filter
+	 * filters
 	 */
-	private IOCInstantiationFilter beanInstantiationFilter;
+	private final List<IOCInstantiationFilter> beanInstantiationFilters = new ArrayList<IOCInstantiationFilter>();
 
 	public Object getBean(String name) throws IOCException {
 		try {
 			if (null != name) {
 				Object ret = beanCache.get(name);
 				if (null != ret) {
+					log.info("returning cached bean '" + name);
 					/*
 					 * was in cache
 					 */
@@ -110,20 +114,12 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 	}
 
 	/**
-	 * instantiate bean. This is 2-recursive. "instantiateBean" calls "getBean"
-	 * on referenced beans, which in turn calls "instantiateBean". This allows
-	 * us to create beans which are declared in the XML before the beans they
-	 * reference.
+	 * get ctor arguments for bean
 	 */
-	private Object instantiateBean(Bean bean) throws IOCException {
+	private Object[] getBeanConstructorArguments(List<Argument> allArguments) throws IOCException {
 		try {
-			log.info("instanting bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
-			/*
-			 * collect the arguments
-			 */
 			Object[] arguments = null;
-			if (null != bean.getArguments()) {
-				final List<Argument> allArguments = bean.getArguments().getArgument();
+			if (null != allArguments) {
 				arguments = new Object[allArguments.size()];
 				for (int i = 0; i < allArguments.size(); i++) {
 					/*
@@ -138,7 +134,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 						if (null != o) {
 							arguments[i] = o;
 						} else {
-							throw new IOCException("Unable to find argument named '" + arg.getValue() + "' for bean '" + bean.getName() + "'");
+							throw new IOCException("Unable to find argument named '" + arg.getValue());
 						}
 					} else {
 						/*
@@ -165,6 +161,31 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 				}
 			}
 			/*
+			 * done
+			 */
+			return arguments;
+		} catch (final Exception e) {
+			throw new IOCException("Exception in getBeanConstructorArguments", e);
+		}
+	}
+
+	/**
+	 * instantiate bean. This is 2-recursive. "instantiateBean" calls "getBean"
+	 * on referenced beans, which in turn calls "instantiateBean". This allows
+	 * us to create beans which are declared in the XML before the beans they
+	 * reference.
+	 */
+	private Object instantiateBean(Bean bean) throws IOCException {
+		try {
+			log.info("instanting bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
+			/*
+			 * collect the arguments
+			 */
+			Object[] arguments = null;
+			if (null != bean.getArguments()) {
+				arguments = getBeanConstructorArguments(bean.getArguments().getArgument());
+			}
+			/*
 			 * get the class
 			 */
 			final Class<?> clazz = Class.forName(bean.getClazz().trim());
@@ -181,9 +202,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 			/*
 			 * filter
 			 */
-			if (null != beanInstantiationFilter) {
-				o = beanInstantiationFilter.filter(this, o, bean);
-			}
+			o = processInstantiationFilters(o, bean);
 			/*
 			 * done
 			 */
@@ -194,9 +213,15 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 
 	}
 
-	public void load(InputStream inputStream, IOCInstantiationFilter beanInstantiationFilter) throws IOCException {
+	/**
+	 * default loader
+	 */
+	public void load() throws IOCException {
+		load(DEFAULT_BEAN_FILE);
+	}
+
+	public void load(InputStream inputStream) throws IOCException {
 		try {
-			this.beanInstantiationFilter = beanInstantiationFilter;
 			/*
 			 * read the xml
 			 */
@@ -222,9 +247,31 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 						/*
 						 * recurse
 						 */
-						this.load("/" + include.getPath(), beanInstantiationFilter);
+						this.load("/" + include.getPath());
 					}
 				}
+				/*
+				 * filters
+				 */
+				final List<Filter> lst3 = beans.getFilter();
+				if ((null != lst3) && (lst3.size() > 0)) {
+					for (int i = 0; i < lst3.size(); i++) {
+						final Filter filter = lst3.get(i);
+						/*
+						 * get the class
+						 */
+						final Class<?> clazz = Class.forName(filter.getClazz().trim());
+						/*
+						 * create
+						 */
+						final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(clazz, null);
+						/*
+						 * add
+						 */
+						beanInstantiationFilters.add(iocInstantiationFilter);
+					}
+				}
+
 			}
 			/*
 			 * autocreate
@@ -236,21 +283,14 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 	}
 
 	/**
-	 * default loader
-	 */
-	public void load(IOCInstantiationFilter beanInstantiationFilter) throws IOCException {
-		load(DEFAULT_BEAN_FILE, beanInstantiationFilter);
-	}
-
-	/**
 	 * load from resource
 	 */
-	public void load(String resourceName, IOCInstantiationFilter beanInstantiationFilter) throws IOCException {
+	public void load(String resourceName) throws IOCException {
 		try {
 			log.info("Loading autobeans from " + resourceName);
 			final InputStream inputStream = DefaultIOCBeanRegistry.class.getResourceAsStream(resourceName);
 			if (null != inputStream) {
-				load(inputStream, beanInstantiationFilter);
+				load(inputStream);
 			} else {
 				throw new Exception("Unable to find '" + resourceName + "'");
 			}
@@ -275,6 +315,34 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 			}
 		} catch (final Exception e) {
 			throw new IOCException("Exception in preInstantiateBeans", e);
+		}
+	}
+
+	/**
+	 * process instantiation filters
+	 */
+	private Object processInstantiationFilters(Object object, Bean bean) throws IOCException {
+		try {
+			Object ret = object;
+			final Iterator<IOCInstantiationFilter> iter = beanInstantiationFilters.iterator();
+			while (iter.hasNext()) {
+				final IOCInstantiationFilter filter = iter.next();
+				/*
+				 * process each filter in a try-catch, in order to trap and make
+				 * helpful exceptions
+				 */
+				try {
+					ret = filter.filter(this, ret, bean);
+				} catch (final Exception e) {
+					throw new Exception("Exception in filter of type '" + filter.getClass().getName() + "'", e);
+				}
+			}
+			/*
+			 * done
+			 */
+			return ret;
+		} catch (final Exception e) {
+			throw new IOCException("Exception in processInstantiationFilters for bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'", e);
 		}
 	}
 }
