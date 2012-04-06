@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
+import com.khubla.simpleioc.annotation.RegistryBean;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.filter.IOCInstantiationFilter;
 import com.khubla.simpleioc.xml.Argument;
@@ -36,6 +37,7 @@ import com.khubla.simpleioc.xml.Beans;
 import com.khubla.simpleioc.xml.Filter;
 import com.khubla.simpleioc.xml.IOCBeanRegistryXMLMarshaller;
 import com.khubla.simpleioc.xml.Include;
+import com.khubla.simpleioc.xml.Package;
 
 /**
  * 
@@ -238,6 +240,16 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 					}
 				}
 				/*
+				 * add bean definitions for classes annotated with @RegistryBean
+				 */
+				final List<Package> lst4 = beans.getPackage();
+				if ((null != lst4) && (lst4.size() > 0)) {
+					for (int i = 0; i < lst4.size(); i++) {
+						final Package pkg = lst4.get(i);
+						scanPackage(pkg.getName());
+					}
+				}
+				/*
 				 * includes
 				 */
 				final List<Include> lst2 = beans.getInclude();
@@ -273,6 +285,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 				}
 
 			}
+
 			/*
 			 * autocreate
 			 */
@@ -343,6 +356,49 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 			return ret;
 		} catch (final Exception e) {
 			throw new IOCException("Exception in processInstantiationFilters for bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'", e);
+		}
+	}
+
+	/**
+	 * scan the package for annotated registry objects. this adds bean
+	 * definitions for each bean found.
+	 */
+	private void scanPackage(String pkg) throws IOCException {
+		try {
+			if (null != pkg) {
+				/*
+				 * get all classes
+				 */
+				final Class<?>[] classes = PackageUtil.getClasses(pkg);
+				/*
+				 * walk classes
+				 */
+				if (null != classes) {
+					for (int i = 0; i < classes.length; i++) {
+						/*
+						 * class
+						 */
+						final Class<?> clazz = classes[i];
+						/*
+						 * marked with the annotation?
+						 */
+						final RegistryBean ro = clazz.getAnnotation(RegistryBean.class);
+						if (null != ro) {
+							/*
+							 * add it
+							 */
+							final Bean bean = new Bean();
+							bean.setClazz(clazz.getName());
+							bean.setName(ro.name());
+							bean.setAutocreate(ro.autocreate());
+							bean.setCache(ro.cached());
+							beanDefinitions.put(bean.getName(), bean);
+						}
+					}
+				}
+			}
+		} catch (final Exception e) {
+			throw new IOCException("Exception in scanPackage", e);
 		}
 	}
 }
