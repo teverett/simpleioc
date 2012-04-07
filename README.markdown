@@ -20,7 +20,7 @@ Finding a bean in code
 Defining a Bean in code:
 -------------------
 
-	@RegistryBean(name = "regBean")
+	@RegistryBean(name = "regBean", cached=false, autocreate=true)
 	public class ExampleAnnotatedBean {
 	}
 
