@@ -269,18 +269,22 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 				if ((null != lst3) && (lst3.size() > 0)) {
 					for (int i = 0; i < lst3.size(); i++) {
 						final Filter filter = lst3.get(i);
-						/*
-						 * get the class
-						 */
-						final Class<?> clazz = Class.forName(filter.getClazz().trim());
-						/*
-						 * create
-						 */
-						final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(clazz, null);
-						/*
-						 * add
-						 */
-						beanInstantiationFilters.add(iocInstantiationFilter);
+						try {
+							/*
+							 * get the class
+							 */
+							final Class<?> clazz = Class.forName(filter.getClazz().trim());
+							/*
+							 * create
+							 */
+							final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(clazz, null);
+							/*
+							 * add
+							 */
+							beanInstantiationFilters.add(iocInstantiationFilter);
+						} catch (final Exception e) {
+							throw new Exception("Exception instantiating filter '" + filter.getClazz().trim() + "'", e);
+						}
 					}
 				}
 
@@ -345,7 +349,14 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 				 * helpful exceptions
 				 */
 				try {
-					ret = filter.filter(this, ret, bean);
+					/*
+					 * drop a message
+					 */
+					log.info("processing filter '" + filter.getClass().getName() + "' on bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
+					/*
+					 * filter
+					 */
+					ret = filter.filter(this, ret, object, bean);
 				} catch (final Exception e) {
 					throw new Exception("Exception in filter of type '" + filter.getClass().getName() + "'", e);
 				}

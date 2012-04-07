@@ -29,7 +29,7 @@ import com.khubla.simpleioc.xml.Bean;
  */
 public class ExampleProxyCreatingFilter implements IOCInstantiationFilter {
 
-	public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, Bean bean) throws IOCException {
+	public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, Object originalObject, Bean bean) throws IOCException {
 		try {
 			return Proxy.newProxyInstance(object.getClass().getClassLoader(), object.getClass().getInterfaces(), new DebugProxy(object));
 		} catch (final Exception e) {

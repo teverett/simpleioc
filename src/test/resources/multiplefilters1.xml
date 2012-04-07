@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<beans xmlns="http://org.om.dynabean">
+	<filter>
+		<class>com.khubla.simpleioc.filter.ExampleIOCInstantiationFilter</class>
+	</filter>
+	<filter>
+		<class>com.khubla.simpleioc.filter.impl.JSR330Filter</class>
+	</filter>
+	<package>
+		<name>com.khubla.simpleioc</name>
+	</package>
+</beans>
+

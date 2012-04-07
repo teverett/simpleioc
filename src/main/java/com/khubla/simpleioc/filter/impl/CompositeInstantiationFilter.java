@@ -39,11 +39,11 @@ public class CompositeInstantiationFilter implements IOCInstantiationFilter {
 		filters.add(iocInstantiationFilter);
 	}
 
-	public Object filter(final IOCBeanRegistry iocBeanRegistry, Object object, Bean bean) throws IOCException {
+	public Object filter(final IOCBeanRegistry iocBeanRegistry, Object object, Object originalObject, Bean bean) throws IOCException {
 		try {
 			Object o = object;
 			for (int i = 0; i < filters.size(); i++) {
-				o = filters.get(i).filter(iocBeanRegistry, o, bean);
+				o = filters.get(i).filter(iocBeanRegistry, o, originalObject, bean);
 			}
 			return o;
 		} catch (final Exception e) {

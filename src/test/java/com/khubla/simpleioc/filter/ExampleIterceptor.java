@@ -15,19 +15,25 @@ package com.khubla.simpleioc.filter;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import com.khubla.simpleioc.IOCBeanRegistry;
-import com.khubla.simpleioc.exception.IOCException;
-import com.khubla.simpleioc.xml.Bean;
+import java.lang.reflect.Method;
+
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 /**
  * 
  * @author tome
  * 
  */
-public interface IOCInstantiationFilter {
+public class ExampleIterceptor implements MethodInterceptor {
 
-	/**
-	 * filter. Return the object, or a proxy to it.
-	 */
-	Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Object originalObject, final Bean bean) throws IOCException;
+	private final Object realObj;
+
+	public ExampleIterceptor(Object realObj) {
+		this.realObj = realObj;
+	}
+
+	public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+		return method.invoke(realObj, objects);
+	}
 }

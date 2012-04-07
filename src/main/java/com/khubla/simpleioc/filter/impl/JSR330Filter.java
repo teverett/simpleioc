@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.exception.IOCException;
@@ -36,14 +38,18 @@ import com.khubla.simpleioc.xml.Bean;
  * 
  */
 public class JSR330Filter implements IOCInstantiationFilter {
+	/**
+	 * log
+	 */
+	private final Log log = LogFactory.getLog(JSR330Filter.class);
 
-	public Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Bean bean) throws IOCException {
+	public Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Object originalObject, final Bean bean) throws IOCException {
 		try {
 			Object ret = object;
 			/*
 			 * get the members
 			 */
-			final Field[] fields = object.getClass().getDeclaredFields();
+			final Field[] fields = originalObject.getClass().getDeclaredFields();
 			if ((null != fields) && (fields.length > 0)) {
 				/*
 				 * walk
@@ -66,6 +72,10 @@ public class JSR330Filter implements IOCInstantiationFilter {
 
 	private Object processInject(final IOCBeanRegistry iocBeanRegistry, Object object, Field field, Inject inject) throws IOCException {
 		try {
+			/*
+			 * log message
+			 */
+			log.info("processing JSR330 inject on field '" + field.getName() + "' of object '" + object.getClass().getName() + "'");
 			/*
 			 * the default name of the bean we want is the field name
 			 */

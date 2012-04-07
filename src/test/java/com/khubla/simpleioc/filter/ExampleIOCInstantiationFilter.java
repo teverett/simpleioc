@@ -15,19 +15,22 @@ package com.khubla.simpleioc.filter;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+import net.sf.cglib.proxy.Enhancer;
+
 import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.xml.Bean;
 
-/**
- * 
- * @author tome
- * 
- */
-public interface IOCInstantiationFilter {
+public class ExampleIOCInstantiationFilter implements IOCInstantiationFilter {
 
-	/**
-	 * filter. Return the object, or a proxy to it.
-	 */
-	Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Object originalObject, final Bean bean) throws IOCException;
+	public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, final Object originalObject, Bean bean) throws IOCException {
+		try {
+			final Enhancer e = new Enhancer();
+			e.setSuperclass(originalObject.getClass());
+			e.setCallback(new ExampleIterceptor(originalObject));
+			return e.create();
+		} catch (final Exception e) {
+			throw new IOCException("Exception in filter", e);
+		}
+	}
 }

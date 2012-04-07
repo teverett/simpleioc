@@ -1,5 +1,7 @@
 package com.khubla.simpleioc.filter;
 
+import com.khubla.simpleioc.annotation.RegistryBean;
+
 /**
  * Copyright 2012 Tom Everett
  * 
@@ -15,19 +17,22 @@ package com.khubla.simpleioc.filter;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import com.khubla.simpleioc.IOCBeanRegistry;
-import com.khubla.simpleioc.exception.IOCException;
-import com.khubla.simpleioc.xml.Bean;
-
 /**
  * 
  * @author tome
  * 
  */
-public interface IOCInstantiationFilter {
+@RegistryBean(name = "regBean2")
+public class ExampleBean2 {
 
-	/**
-	 * filter. Return the object, or a proxy to it.
-	 */
-	Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Object originalObject, final Bean bean) throws IOCException;
+	private String drink = "beer";
+
+	public String getDrink() {
+		return drink;
+	}
+
+	public void setDrink(String drink) {
+		this.drink = drink;
+	}
+
 }

@@ -1,5 +1,10 @@
 package com.khubla.simpleioc.filter;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import com.khubla.simpleioc.annotation.RegistryBean;
+
 /**
  * Copyright 2012 Tom Everett
  * 
@@ -15,19 +20,34 @@ package com.khubla.simpleioc.filter;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import com.khubla.simpleioc.IOCBeanRegistry;
-import com.khubla.simpleioc.exception.IOCException;
-import com.khubla.simpleioc.xml.Bean;
-
 /**
  * 
  * @author tome
  * 
  */
-public interface IOCInstantiationFilter {
+@RegistryBean(name = "regBean")
+public class ExampleBean1 {
 
-	/**
-	 * filter. Return the object, or a proxy to it.
-	 */
-	Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Object originalObject, final Bean bean) throws IOCException;
+	private String field = "hi there";
+
+	@Inject
+	@Named("regBean2")
+	private ExampleBean2 exampleBean2;
+
+	public ExampleBean2 getExampleBean2() {
+		return exampleBean2;
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public void setExampleBean2(ExampleBean2 exampleBean2) {
+		this.exampleBean2 = exampleBean2;
+	}
+
+	public void setField(String field) {
+		this.field = field;
+	}
+
 }
