@@ -32,7 +32,7 @@ public class TestMultipleFilters {
 	 * with the example proxy after processing jsr330 injections
 	 */
 	@Test
-	public void test1() {
+	public void injectBeforeProxy() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
 			autobeanRegistry.load("/multiplefilters1.xml");
@@ -51,8 +51,8 @@ public class TestMultipleFilters {
 	 * in this case the example proxy is run before jsr330, so jsr330 filter is
 	 * injecting into a proxy.
 	 */
-	@Test(enabled = false)
-	public void test2() {
+	@Test()
+	public void proxyBeforeInject() {
 		try {
 			final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
 			autobeanRegistry.load("/multiplefilters2.xml");
