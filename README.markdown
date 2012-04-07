@@ -11,7 +11,7 @@ Finding a bean in code
 -------------------
 
 	final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-	autobeanRegistry.load(inputStream);
+	autobeanRegistry.load("beans.xml");
 	/*
 	 * populate the beans we need
 	 */
