@@ -33,21 +33,24 @@ Injection via JCR330
 	private SampleInjectedInterface interface2;
 	
 
-Construction filters can be used by SimpleIOC to wrap beans in arbitrary dynamic proxies at construction time.  
+Construction filters can be used by SimpleIOC to wrap beans in arbitrary dynamic proxies at construction time. 
+
 A typical example is using cglib to define a dynamic proxy which can be used to implement a custom annotation such as @Transactional
 
 Defining Construction filters.  
 -------------------
 
-public class ExampleProxyCreatingFilter implements IOCInstantiationFilter {
-
-	public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, Bean bean) throws IOCException {
-		try {
-			return Proxy.newProxyInstance(object.getClass().getClassLoader(), object.getClass().getInterfaces(), new DebugProxy(object));
-		} catch (final Exception e) {
-			throw new IOCException("Exception in filter", e);
+	public class ExampleProxyCreatingFilter implements IOCInstantiationFilter {
+		public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, Bean bean) throws IOCException {
+			try {
+				return Proxy.newProxyInstance(object.getClass().getClassLoader(), object.getClass().getInterfaces(), new DebugProxy(object));
+			} catch (final Exception e) {
+				throw new IOCException("Exception in filter", e);
+			}
 		}
 	}
-}
+
+
+
 
 
