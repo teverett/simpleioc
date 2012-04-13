@@ -57,11 +57,27 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
     * filters
     */
    private final List<IOCInstantiationFilter> beanInstantiationFilters = new ArrayList<IOCInstantiationFilter>();
+   /**
+    * the ThreadLocal cache
+    */
+   private ThreadLocal<Hashtable<String, Object>> threadLocalBeanCache = null;
 
    public Object getBean(String name) throws IOCException {
       try {
          if (null != name) {
-            Object ret = beanCache.get(name);
+            /*
+             * the ret
+             */
+            Object ret = null;
+            /*
+             * check which cache....
+             */
+            Bean beanDefinition = this.beanDefinitions.get(name);
+            if (beanDefinition.isThreadlocal()) {
+               ret = getThreadLocalBean(name);
+            } else {
+               ret = beanCache.get(name);
+            }
             if (null != ret) {
                log.info("returning cached bean '" + name);
                /*
@@ -187,7 +203,11 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
           * cache?
           */
          if (bean.isCache()) {
-            beanCache.put(bean.getName(), o);
+            if (bean.isThreadlocal()) {
+               this.setThreadLocalBean(bean.getName(), o);
+            } else {
+               beanCache.put(bean.getName(), o);
+            }
          }
          /*
           * filter
@@ -407,6 +427,54 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          }
       } catch (final Exception e) {
          throw new IOCException("Exception in scanPackage", e);
+      }
+   }
+
+   /**
+    * get a threadlocal bean
+    */
+   private Object getThreadLocalBean(String name) throws IOCException {
+      try {
+         if (null != this.threadLocalBeanCache) {
+            Hashtable<String, Object> hash = this.threadLocalBeanCache.get();
+            if (null != hash) {
+               return hash.get(name);
+            }
+         }
+         return null;
+      } catch (Exception e) {
+         throw new IOCException("Exception in getThreadLocalBean", e);
+      }
+   }
+
+   /**
+    * set a threadlocal bean
+    */
+   private void setThreadLocalBean(String name, Object object) throws IOCException {
+      try {
+         /*
+          * create cache threadlocal if needed
+          */
+         if (null == this.threadLocalBeanCache) {
+            this.threadLocalBeanCache = new ThreadLocal<Hashtable<String, Object>>();
+         }
+         /*
+          * create hash if needed
+          */
+         Hashtable<String, Object> hash = this.threadLocalBeanCache.get();
+         if (null == hash) {
+            hash = new Hashtable<String, Object>();
+         }
+         /*
+          * set bean
+          */
+         hash.put(name, object);
+         /*
+          * set the hash
+          */
+         this.threadLocalBeanCache.set(hash);
+      } catch (Exception e) {
+         throw new IOCException("Exception in setThreadLocalBean", e);
       }
    }
 }
