@@ -7,6 +7,12 @@ Introduction
 
 SimpleIOC is a framework for configuring autowire (JSR330) beans using XML.
 
+Configurable bean properties include
+
+* caching (singleton)
+* ThreadLocal beans
+* autocreation
+
 Defining a Bean in code:
 -------------------
 
