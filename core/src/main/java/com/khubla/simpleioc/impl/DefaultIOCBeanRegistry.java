@@ -420,6 +420,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                      bean.setName(ro.name());
                      bean.setAutocreate(ro.autocreate());
                      bean.setCache(ro.cached());
+                     bean.setThreadlocal(ro.threadlocal());
                      beanDefinitions.put(bean.getName(), bean);
                   }
                }
