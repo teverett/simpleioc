@@ -7,6 +7,7 @@
 				<xs:element ref="include" maxOccurs="unbounded" minOccurs="0" />
 				<xs:element ref="filter" maxOccurs="unbounded" minOccurs="0" />
 				<xs:element ref="package" maxOccurs="unbounded" minOccurs="0" />
+				<xs:element ref="property" maxOccurs="unbounded" minOccurs="0" />
 			</xs:sequence>
 			<xs:attribute name="version" type="xs:string" />
 		</xs:complexType>
@@ -15,6 +16,14 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="path" type="xs:string" maxOccurs="1" minOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="property">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="xs:string" maxOccurs="1" minOccurs="1" />
+				<xs:element name="value" type="xs:string" maxOccurs="1" minOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
