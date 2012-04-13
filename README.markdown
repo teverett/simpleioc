@@ -7,16 +7,6 @@ Introduction
 
 SimpleIOC is a framework for configuring autowire (JSR330) beans using XML.
 
-Finding a bean in code
--------------------
-
-	final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-	autobeanRegistry.load("beans.xml");
-	/*
-	 * populate the beans we need
-	 */
-	jcrPersistenceContext = (JcrPersistenceContext) autobeanRegistry.getBean("jcrpersistencecontext");
-
 Defining a Bean in code:
 -------------------
 
@@ -37,6 +27,17 @@ Construction filters can be used by SimpleIOC to wrap beans in arbitrary dynamic
 
 A typical example is using cglib to define a dynamic proxy which can be used to implement a custom annotation such as @Transactional
 
+Finding a bean in code
+-------------------
+
+	final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
+	autobeanRegistry.load("beans.xml");
+	/*
+	 * populate the beans we need
+	 */
+	jcrPersistenceContext = (JcrPersistenceContext) autobeanRegistry.getBean("jcrpersistencecontext");
+
+
 Defining Construction filters.  
 -------------------
 
@@ -50,6 +51,12 @@ Defining Construction filters.
 		}
 	}
 
+Addons Available  
+-------------------
+
+* simpleioc-struts.  Support for injection of JSR330 beans into Strut2 Actions
+* simpleioc-testng.  Support for TestNG Testing
+* simpleioc-junit.   Support for JUnit Testing
 
 
 
