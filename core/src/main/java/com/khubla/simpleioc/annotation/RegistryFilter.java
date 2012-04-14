@@ -10,10 +10,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.khubla.simpleioc.IOCBeanRegistry;
+
 /**
  * @author tome
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface RegistryFilter {
+   String[] profiles() default { IOCBeanRegistry.DEFAULT_PROFILE };
 }

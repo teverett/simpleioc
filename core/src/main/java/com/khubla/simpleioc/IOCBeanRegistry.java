@@ -12,6 +12,11 @@ import com.khubla.simpleioc.exception.IOCException;
  */
 public interface IOCBeanRegistry {
    /**
+    * default profile
+    */
+   public final static String DEFAULT_PROFILE = "default";
+
+   /**
     * get a bean
     */
    Object getBean(String name) throws IOCException;
@@ -20,6 +25,16 @@ public interface IOCBeanRegistry {
     * get a bean
     */
    <T> T getBean(String name, Class<T> clazz) throws IOCException;
+
+   /**
+    * get a bean
+    */
+   <T> T getBean(String name, Class<T> clazz, String profile) throws IOCException;
+
+   /**
+    * get a bean, a specify a profile
+    */
+   Object getBean(String name, String profile) throws IOCException;
 
    /**
     * load bean definitions

@@ -10,6 +10,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.khubla.simpleioc.IOCBeanRegistry;
+
 /**
  * @author tome
  */
@@ -21,6 +23,8 @@ public @interface RegistryBean {
    boolean cached() default false;
 
    String name();
+
+   String[] profiles() default { IOCBeanRegistry.DEFAULT_PROFILE };
 
    boolean threadlocal() default false;
 }
