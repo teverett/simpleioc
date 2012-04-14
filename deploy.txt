@@ -1,2 +1,2 @@
-mvn clean deploy -DperformRelease=true
+mvn clean install deploy -DperformRelease=true
 
