@@ -13,7 +13,7 @@ import com.khubla.simpleioc.annotation.RegistryBean;
 /**
  * @author tome
  */
-@RegistryBean(name = "exampleBean1")
+@RegistryBean()
 public class ExampleBean1 {
    private String field = "hi there";
    @Inject

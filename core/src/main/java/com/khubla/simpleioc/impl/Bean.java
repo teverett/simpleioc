@@ -7,11 +7,16 @@ public class Bean {
    private boolean threadlocal;
    private boolean autocreate;
    private boolean cache;
-   private String clazz;
+   private String className;
    private String name;
    private String profile;
+   private Class<?> clazz;
 
-   public String getClazz() {
+   public String getClassName() {
+      return className;
+   }
+
+   public Class<?> getClazz() {
       return clazz;
    }
 
@@ -43,7 +48,11 @@ public class Bean {
       this.cache = cache;
    }
 
-   public void setClazz(String clazz) {
+   public void setClassName(String className) {
+      this.className = className;
+   }
+
+   public void setClazz(Class<?> clazz) {
       this.clazz = clazz;
    }
 

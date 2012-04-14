@@ -18,13 +18,28 @@ import com.khubla.simpleioc.IOCBeanRegistry;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface RegistryBean {
+   /**
+    * bean is automatically created by the IOC Registry?
+    */
    boolean autocreate() default false;
 
+   /**
+    * bean is cached by the IOC Registry? (use this to implement singletons)
+    */
    boolean cached() default false;
 
-   String name();
+   /**
+    * name of the bean. if not specified, the class name with the first letter lower case will be used
+    */
+   String name() default "";
 
+   /**
+    * profiles that this bean is a member of
+    */
    String[] profiles() default { IOCBeanRegistry.DEFAULT_PROFILE };
 
+   /**
+    * bean is cached thread-local?
+    */
    boolean threadlocal() default false;
 }

@@ -120,6 +120,17 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                final RegistryBean ro = clazz.getAnnotation(RegistryBean.class);
                if (null != ro) {
                   /*
+                   * bean name
+                   */
+                  String beanName = ro.name();
+                  if (beanName.length() == 0) {
+                     /*
+                      * use the class name
+                      */
+                     beanName = clazz.getSimpleName();
+                     beanName = Character.toLowerCase(beanName.charAt(0)) + beanName.substring(1);
+                  }
+                  /*
                    * iterate the profiles
                    */
                   for (final String profileName : ro.profiles()) {
@@ -127,31 +138,32 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                       * check if we already have a bean with that name
                       */
                      Profile profile = profiles.get(profileName);
-                     if ((null != profile) && (profile.hasBeanDefinition(ro.name()))) {
+                     if ((null != profile) && (profile.hasBeanDefinition(beanName))) {
                         /*
                          * log a message
                          */
-                        log.info("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + ro.name() + "' already exists and is of type '"
-                              + profile.getBeanDefinition(ro.name()).getClazz()
+                        log.info("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + beanName + "' already exists and is of type '"
+                              + profile.getBeanDefinition(beanName).getClassName()
                               + "'");
                         /*
                          * explode
                          */
-                        throw new IOCException("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + ro.name() + "' already exists and is of type '"
-                              + profile.getBeanDefinition(ro.name()).getClazz()
+                        throw new IOCException("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + beanName + "' already exists and is of type '"
+                              + profile.getBeanDefinition(beanName).getClassName()
                               + "'");
                      }
                      else {
                         /*
                          * log
                          */
-                        log.info("adding bean definition '" + clazz.getName() + "' with name '" + ro.name() + "' to profile '" + profileName + "'");
+                        log.info("adding bean definition '" + clazz.getName() + "' with name '" + beanName + "' to profile '" + profileName + "'");
                         /*
                          * add it
                          */
                         final Bean bean = new Bean();
-                        bean.setClazz(clazz.getName());
-                        bean.setName(ro.name());
+                        bean.setClazz(clazz);
+                        bean.setClassName(clazz.getName());
+                        bean.setName(beanName);
                         bean.setProfile(profileName);
                         bean.setAutocreate(ro.autocreate());
                         bean.setCache(ro.cached());

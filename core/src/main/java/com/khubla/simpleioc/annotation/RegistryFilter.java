@@ -18,5 +18,8 @@ import com.khubla.simpleioc.IOCBeanRegistry;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface RegistryFilter {
+   /**
+    * profiles that this filter is a member of
+    */
    String[] profiles() default { IOCBeanRegistry.DEFAULT_PROFILE };
 }

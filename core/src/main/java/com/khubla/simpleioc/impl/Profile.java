@@ -188,7 +188,7 @@ public class Profile {
     */
    private Object instantiateBean(Bean bean) throws IOCException {
       try {
-         log.info("instanting bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
+         log.info("instanting bean '" + bean.getName() + "' of type '" + bean.getClassName() + "'");
          /*
           * collect the arguments
           */
@@ -196,7 +196,7 @@ public class Profile {
          /*
           * get the class
           */
-         final Class<?> clazz = Class.forName(bean.getClazz().trim());
+         final Class<?> clazz = bean.getClazz();
          /*
           * create
           */
@@ -225,7 +225,7 @@ public class Profile {
           */
          return o;
       } catch (final Exception e) {
-         throw new IOCException("Exception in instantiateBean for bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'", e);
+         throw new IOCException("Exception in instantiateBean for bean '" + bean.getName() + "' of type '" + bean.getClassName() + "'", e);
       }
    }
 
@@ -239,7 +239,7 @@ public class Profile {
             final String key = enumer.nextElement();
             final Bean bean = beanDefinitions.get(key);
             if (bean.isAutocreate()) {
-               log.info("preinstanting bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
+               log.info("preinstanting bean '" + bean.getName() + "' of type '" + bean.getClassName() + "'");
                instantiateBean(bean);
             }
          }
@@ -264,7 +264,7 @@ public class Profile {
                /*
                 * drop a message
                 */
-               log.info("processing filter '" + filter.getClass().getName() + "' on bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'");
+               log.info("processing filter '" + filter.getClass().getName() + "' on bean '" + bean.getName() + "' of type '" + bean.getClassName() + "'");
                /*
                 * filter
                 */
@@ -278,7 +278,7 @@ public class Profile {
           */
          return ret;
       } catch (final Exception e) {
-         throw new IOCException("Exception in processInstantiationFilters for bean '" + bean.getName() + "' of type '" + bean.getClazz() + "'", e);
+         throw new IOCException("Exception in processInstantiationFilters for bean '" + bean.getName() + "' of type '" + bean.getClassName() + "'", e);
       }
    }
 
