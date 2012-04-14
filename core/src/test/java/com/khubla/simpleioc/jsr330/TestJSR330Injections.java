@@ -1,4 +1,4 @@
-package com.khubla.simpleioc.annotation;
+package com.khubla.simpleioc.jsr330;
 
 /**
  * Copyright 2012 Tom Everett Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -14,16 +14,21 @@ import com.khubla.simpleioc.impl.DefaultIOCBeanRegistry;
 /**
  * @author tome
  */
-public class TestRegistryBeanAnnotation {
+public class TestJSR330Injections {
+   /**
+    * a test of the JSR 330 inject
+    */
    @Test
    public void test1() {
       try {
          final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
          autobeanRegistry.load();
          Assert.assertNotNull(autobeanRegistry);
-         final ExampleAnnotatedBean exampleBean = (ExampleAnnotatedBean) autobeanRegistry.getBean("regBean");
-         Assert.assertNotNull(exampleBean);
-         Assert.assertTrue(exampleBean.getField().compareTo("hi there") == 0);
+         Assert.assertNotNull(autobeanRegistry.getBean("sampleInjectObject"));
+         final SampleInjectObject sio = (SampleInjectObject) autobeanRegistry.getBean("sampleInjectObject");
+         Assert.assertNotNull(sio);
+         Assert.assertNotNull(sio.getSampleInjectedObject());
+         Assert.assertNotNull(sio.getInterface2());
       } catch (final Exception e) {
          e.printStackTrace();
          Assert.fail();

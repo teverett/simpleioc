@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.khubla.simpleioc</groupId>
 	<artifactId>simpleioc-core</artifactId>
-	<version>1.0.12-SNAPSHOT</version>
+	<version>1.0.14-SNAPSHOT</version>
 	<name>khubla.com Simple IOC Core</name>
 	<dependencies>
 		<dependency>
@@ -36,26 +36,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-xjc-plugin</artifactId>
-				<version>2.3.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>xsdtojava</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<xsdOptions>
-						<xsdOption>
-							<xsd>${basedir}/src/main/resources/autobeans.xsd</xsd>
-							<packagename>com.khubla.simpleioc.xml</packagename>
-						</xsdOption>
-					</xsdOptions>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<distributionManagement>

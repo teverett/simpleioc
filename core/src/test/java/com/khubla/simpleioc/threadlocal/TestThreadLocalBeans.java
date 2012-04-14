@@ -22,11 +22,11 @@ public class TestThreadLocalBeans {
    public void test1() {
       try {
          final IOCBeanRegistry autobeanRegistry = new DefaultIOCBeanRegistry();
-         autobeanRegistry.load("/threadlocalbeans.xml");
+         autobeanRegistry.load();
          Assert.assertNotNull(autobeanRegistry);
-         Object o = autobeanRegistry.getBean("strstr");
+         Object o = autobeanRegistry.getBean("sampleInjectObject");
          Assert.assertNotNull(o);
-         o = autobeanRegistry.getBean("strstr");
+         o = autobeanRegistry.getBean("sampleInjectObject");
          Assert.assertNotNull(o);
       } catch (final Exception e) {
          e.printStackTrace();

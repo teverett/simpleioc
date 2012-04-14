@@ -8,7 +8,7 @@
 		<dependency>
 			<groupId>com.khubla.simpleioc</groupId>
 			<artifactId>simpleioc-core</artifactId>
-			<version>1.0.12-SNAPSHOT</version>
+			<version>1.0.14-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

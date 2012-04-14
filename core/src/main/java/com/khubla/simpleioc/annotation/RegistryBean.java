@@ -20,7 +20,7 @@ public @interface RegistryBean {
 
    boolean cached() default false;
 
-   boolean threadlocal() default false;
-
    String name();
+
+   boolean threadlocal() default false;
 }

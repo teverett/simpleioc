@@ -5,7 +5,6 @@ package com.khubla.simpleioc.impl;
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
  * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -18,16 +17,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.annotation.RegistryBean;
+import com.khubla.simpleioc.annotation.RegistryFilter;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.filter.IOCInstantiationFilter;
-import com.khubla.simpleioc.xml.Argument;
-import com.khubla.simpleioc.xml.Bean;
-import com.khubla.simpleioc.xml.Beans;
-import com.khubla.simpleioc.xml.Filter;
-import com.khubla.simpleioc.xml.IOCBeanRegistryXMLMarshaller;
-import com.khubla.simpleioc.xml.Include;
-import com.khubla.simpleioc.xml.Package;
-import com.khubla.simpleioc.xml.Property;
 
 /**
  * @author tome
@@ -38,10 +30,6 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
     */
    private final Log log = LogFactory.getLog(DefaultIOCBeanRegistry.class);
    /**
-    * default bean file
-    */
-   private final static String DEFAULT_BEAN_FILE = "/autobeans.xml";
-   /**
     * beans
     */
    private final Hashtable<String, Object> beanCache = new Hashtable<String, Object>();
@@ -49,10 +37,6 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
     * bean definitions
     */
    private final Hashtable<String, Bean> beanDefinitions = new Hashtable<String, Bean>();
-   /**
-    * properties
-    */
-   private final Hashtable<String, String> properties = new Hashtable<String, String>();
    /**
     * filters
     */
@@ -72,37 +56,48 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
             /*
              * check which cache....
              */
-            Bean beanDefinition = this.beanDefinitions.get(name);
-            if (beanDefinition.isThreadlocal()) {
-               ret = getThreadLocalBean(name);
-            } else {
-               ret = beanCache.get(name);
-            }
-            if (null != ret) {
-               log.info("returning cached bean '" + name);
-               /*
-                * was in cache
-                */
-               return ret;
-            } else {
-               /*
-                * get bean definition
-                */
-               final Bean bean = beanDefinitions.get(name);
-               if (null != bean) {
+            final Bean beanDefinition = beanDefinitions.get(name);
+            if (null != beanDefinition) {
+               if (beanDefinition.isThreadlocal()) {
+                  ret = getThreadLocalBean(name);
+               } else {
+                  ret = beanCache.get(name);
+               }
+               if (null != ret) {
+                  log.info("returning cached bean '" + name);
                   /*
-                   * create it
-                   */
-                  ret = instantiateBean(bean);
-                  /*
-                   * done
+                   * was in cache
                    */
                   return ret;
                } else {
-                  throw new Exception("Unknown bean name '" + name + "'");
+                  /*
+                   * get bean definition
+                   */
+                  final Bean bean = beanDefinitions.get(name);
+                  if (null != bean) {
+                     /*
+                      * create it
+                      */
+                     ret = instantiateBean(bean);
+                     /*
+                      * done
+                      */
+                     return ret;
+                  } else {
+                     throw new Exception("Unknown bean name '" + name + "'");
+                  }
                }
+            } else {
+               /*
+                * no such bean definition
+                */
+               log.info("bean '" + name + "' is not registered and cannot be found");
+               return null;
             }
          } else {
+            /*
+             * no name supplied
+             */
             return null;
          }
       } catch (final Exception e) {
@@ -122,58 +117,19 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
    }
 
    /**
-    * get ctor arguments for bean
+    * get a threadlocal bean
     */
-   private Object[] getBeanConstructorArguments(List<Argument> allArguments) throws IOCException {
+   private Object getThreadLocalBean(String name) throws IOCException {
       try {
-         Object[] arguments = null;
-         if (null != allArguments) {
-            arguments = new Object[allArguments.size()];
-            for (int i = 0; i < allArguments.size(); i++) {
-               /*
-                * single argument
-                */
-               final Argument arg = allArguments.get(i);
-               if (arg.isReference()) {
-                  /*
-                   * resolve the argument by name
-                   */
-                  final Object o = getBean(arg.getValue());
-                  if (null != o) {
-                     arguments[i] = o;
-                  } else {
-                     throw new IOCException("Unable to find argument named '" + arg.getValue());
-                  }
-               } else {
-                  /*
-                   * argument is a value type
-                   */
-                  arguments[i] = arg.getValue();
-                  /*
-                   * convert
-                   */
-                  if (null != arg.getValuetype()) {
-                     if (arg.getValuetype().compareTo("byte") == 0) {
-                        arguments[i] = Byte.parseByte((String) arguments[i]);
-                     } else if (arg.getValuetype().compareTo("int") == 0) {
-                        arguments[i] = Integer.parseInt((String) arguments[i]);
-                     } else if (arg.getValuetype().compareTo("long") == 0) {
-                        arguments[i] = Long.parseLong((String) arguments[i]);
-                     } else if (arg.getValuetype().compareTo("float") == 0) {
-                        arguments[i] = Float.parseFloat((String) arguments[i]);
-                     } else if (arg.getValuetype().compareTo("double") == 0) {
-                        arguments[i] = Double.parseDouble((String) arguments[i]);
-                     }
-                  }
-               }
+         if (null != threadLocalBeanCache) {
+            final Hashtable<String, Object> hash = threadLocalBeanCache.get();
+            if (null != hash) {
+               return hash.get(name);
             }
          }
-         /*
-          * done
-          */
-         return arguments;
+         return null;
       } catch (final Exception e) {
-         throw new IOCException("Exception in getBeanConstructorArguments", e);
+         throw new IOCException("Exception in getThreadLocalBean", e);
       }
    }
 
@@ -188,9 +144,6 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
           * collect the arguments
           */
          Object[] arguments = null;
-         if (null != bean.getArguments()) {
-            arguments = getBeanConstructorArguments(bean.getArguments().getArgument());
-         }
          /*
           * get the class
           */
@@ -204,11 +157,16 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
           */
          if (bean.isCache()) {
             if (bean.isThreadlocal()) {
-               this.setThreadLocalBean(bean.getName(), o);
+               setThreadLocalBean(bean.getName(), o);
             } else {
                beanCache.put(bean.getName(), o);
             }
          }
+         /*
+          * perform jsr 330 injections
+          */
+         final InjectUtil injectUtil = new InjectUtil(this);
+         o = injectUtil.performJSR330Injection(o);
          /*
           * filter
           */
@@ -226,106 +184,15 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
     * default loader
     */
    public void load() throws IOCException {
-      load(DEFAULT_BEAN_FILE);
-   }
-
-   public void load(InputStream inputStream) throws IOCException {
       try {
          /*
-          * read the xml
+          * perform scan
           */
-         final Beans beans = IOCBeanRegistryXMLMarshaller.unmarshall(inputStream);
-         if (null != beans) {
-            /*
-             * beans
-             */
-            final List<Bean> lst = beans.getBean();
-            if ((null != lst) && (lst.size() > 0)) {
-               for (int i = 0; i < lst.size(); i++) {
-                  final Bean bean = lst.get(i);
-                  beanDefinitions.put(bean.getName().trim(), bean);
-               }
-            }
-            /*
-             * properties
-             */
-            final List<Property> lst5 = beans.getProperty();
-            if ((null != lst5) && (lst5.size() > 0)) {
-               for (int i = 0; i < lst5.size(); i++) {
-                  final Property prop = lst5.get(i);
-                  this.properties.put(prop.getName(), prop.getValue());
-               }
-            }
-            /*
-             * add bean definitions for classes annotated with @RegistryBean
-             */
-            final List<Package> lst4 = beans.getPackage();
-            if ((null != lst4) && (lst4.size() > 0)) {
-               for (int i = 0; i < lst4.size(); i++) {
-                  final Package pkg = lst4.get(i);
-                  scanPackage(pkg.getName());
-               }
-            }
-            /*
-             * includes
-             */
-            final List<Include> lst2 = beans.getInclude();
-            if ((null != lst2) && (lst2.size() > 0)) {
-               for (int i = 0; i < lst2.size(); i++) {
-                  final Include include = lst2.get(i);
-                  /*
-                   * recurse
-                   */
-                  this.load("/" + include.getPath());
-               }
-            }
-            /*
-             * filters
-             */
-            final List<Filter> lst3 = beans.getFilter();
-            if ((null != lst3) && (lst3.size() > 0)) {
-               for (int i = 0; i < lst3.size(); i++) {
-                  final Filter filter = lst3.get(i);
-                  try {
-                     /*
-                      * get the class
-                      */
-                     final Class<?> clazz = Class.forName(filter.getClazz().trim());
-                     /*
-                      * create
-                      */
-                     final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(clazz, null);
-                     /*
-                      * add
-                      */
-                     beanInstantiationFilters.add(iocInstantiationFilter);
-                  } catch (final Exception e) {
-                     throw new Exception("Exception instantiating filter '" + filter.getClazz().trim() + "'", e);
-                  }
-               }
-            }
-         }
+         scanPackages();
          /*
           * autocreate
           */
          preInstantiateBeans();
-      } catch (final Exception e) {
-         throw new IOCException("Exception in load", e);
-      }
-   }
-
-   /**
-    * load from resource
-    */
-   public void load(String resourceName) throws IOCException {
-      try {
-         log.info("Loading autobeans from " + resourceName);
-         final InputStream inputStream = DefaultIOCBeanRegistry.class.getResourceAsStream(resourceName);
-         if (null != inputStream) {
-            load(inputStream);
-         } else {
-            throw new Exception("Unable to find '" + resourceName + "'");
-         }
       } catch (final Exception e) {
          throw new IOCException("Exception in load", e);
       }
@@ -385,33 +252,40 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
    }
 
    /**
-    * scan the package for annotated registry objects. this adds bean definitions for each bean found.
+    * scan the packages for annotated registry objects. this adds bean definitions for each bean found.
     */
-   private void scanPackage(String pkg) throws IOCException {
+   private void scanPackages() throws IOCException {
       try {
-         if (null != pkg) {
+         /*
+          * get all classes
+          */
+         final Class<?>[] classes = PackageUtil.getClasses();
+         /*
+          * walk classes
+          */
+         if (null != classes) {
             /*
-             * get all classes
+             * message
              */
-            final Class<?>[] classes = PackageUtil.getClasses(pkg);
-            /*
-             * walk classes
-             */
-            if (null != classes) {
-               for (int i = 0; i < classes.length; i++) {
+            log.info("scanning '" + classes.length + "' classes");
+            for (int i = 0; i < classes.length; i++) {
+               /*
+                * class
+                */
+               final Class<?> clazz = classes[i];
+               /*
+                * marked with the annotation?
+                */
+               final RegistryBean ro = clazz.getAnnotation(RegistryBean.class);
+               if (null != ro) {
                   /*
-                   * class
+                   * check if we already have a bean with that name
                    */
-                  final Class<?> clazz = classes[i];
-                  /*
-                   * marked with the annotation?
-                   */
-                  final RegistryBean ro = clazz.getAnnotation(RegistryBean.class);
-                  if (null != ro) {
+                  if (false == beanDefinitions.containsKey(ro.name())) {
                      /*
                       * log
                       */
-                     log.info("adding bean definition '" + clazz.getName() + "'");
+                     log.info("adding bean definition '" + clazz.getName() + "' with name '" + ro.name() + "'");
                      /*
                       * add it
                       */
@@ -422,29 +296,44 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                      bean.setCache(ro.cached());
                      bean.setThreadlocal(ro.threadlocal());
                      beanDefinitions.put(bean.getName(), bean);
+                  } else {
+                     /*
+                      * log a message
+                      */
+                     log.info("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + ro.name() + "' already exists and is of type '" + beanDefinitions.get(ro.name()).getClazz()
+                           + "'");
+                     /*
+                      * explode
+                      */
+                     throw new IOCException("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + ro.name() + "' already exists and is of type '"
+                           + beanDefinitions.get(ro.name()).getClazz()
+                           + "'");
+                  }
+               }
+               /*
+                * filters
+                */
+               final RegistryFilter filter = clazz.getAnnotation(RegistryFilter.class);
+               if (null != filter) {
+                  /*
+                   * log
+                   */
+                  log.info("adding filter '" + clazz.getName() + "'");
+                  /*
+                   * create
+                   */
+                  final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(clazz, null);
+                  /*
+                   * add it
+                   */
+                  if (false == beanInstantiationFilters.contains(iocInstantiationFilter)) {
+                     beanInstantiationFilters.add(iocInstantiationFilter);
                   }
                }
             }
          }
       } catch (final Exception e) {
          throw new IOCException("Exception in scanPackage", e);
-      }
-   }
-
-   /**
-    * get a threadlocal bean
-    */
-   private Object getThreadLocalBean(String name) throws IOCException {
-      try {
-         if (null != this.threadLocalBeanCache) {
-            Hashtable<String, Object> hash = this.threadLocalBeanCache.get();
-            if (null != hash) {
-               return hash.get(name);
-            }
-         }
-         return null;
-      } catch (Exception e) {
-         throw new IOCException("Exception in getThreadLocalBean", e);
       }
    }
 
@@ -456,13 +345,13 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          /*
           * create cache threadlocal if needed
           */
-         if (null == this.threadLocalBeanCache) {
-            this.threadLocalBeanCache = new ThreadLocal<Hashtable<String, Object>>();
+         if (null == threadLocalBeanCache) {
+            threadLocalBeanCache = new ThreadLocal<Hashtable<String, Object>>();
          }
          /*
           * create hash if needed
           */
-         Hashtable<String, Object> hash = this.threadLocalBeanCache.get();
+         Hashtable<String, Object> hash = threadLocalBeanCache.get();
          if (null == hash) {
             hash = new Hashtable<String, Object>();
          }
@@ -473,8 +362,8 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          /*
           * set the hash
           */
-         this.threadLocalBeanCache.set(hash);
-      } catch (Exception e) {
+         threadLocalBeanCache.set(hash);
+      } catch (final Exception e) {
          throw new IOCException("Exception in setThreadLocalBean", e);
       }
    }

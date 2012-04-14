@@ -52,7 +52,7 @@ public class InjectUtil {
             }
          }
          return ret;
-      } catch (Exception e) {
+      } catch (final Exception e) {
          throw new IOCException("Exception in performJSR330Injection", e);
       }
    }
