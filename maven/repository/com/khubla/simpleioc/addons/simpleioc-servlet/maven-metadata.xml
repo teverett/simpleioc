@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.khubla.simpleioc.addons</groupId>
+  <artifactId>simpleioc-servlet</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20120426015844</lastUpdated>
+  </versioning>
+</metadata>
