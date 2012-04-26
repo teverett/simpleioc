@@ -5,8 +5,6 @@ package com.khubla.simpleioc.classlibrary;
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
  * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Hashtable;
@@ -91,20 +89,11 @@ public class ClassLibrary {
          final FileInputStream fis = new FileInputStream(jarfile);
          final ZipInputStream zip_inputstream = new ZipInputStream(fis);
          ZipEntry current_zip_entry = null;
-         while ((current_zip_entry = zip_inputstream.getNextEntry()) != null)
-         {
+         while ((current_zip_entry = zip_inputstream.getNextEntry()) != null) {
             if (current_zip_entry.getName().endsWith(".class")) {
                if (current_zip_entry.getSize() > 0) {
-                  final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                  int data = 0;
-                  while ((data = zip_inputstream.read()) != -1)
-                  {
-                     baos.write(data);
-                  }
-                  baos.flush();
-                  baos.close();
                   final ClassNode classNode = new ClassNode();
-                  final ClassReader cr = new ClassReader(new ByteArrayInputStream(baos.toByteArray()));
+                  final ClassReader cr = new ClassReader(zip_inputstream);
                   cr.accept(classNode, 0);
                   ret.put(classNode.name.replaceAll("/", "."), classNode);
                   log.debug(classNode.name);
