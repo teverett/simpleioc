@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.khubla.simpleioc</groupId>
 	<artifactId>simpleioc-core</artifactId>
-	<version>1.0.17-SNAPSHOT</version>
+	<version>1.0.18-SNAPSHOT</version>
 	<name>khubla.com Simple IOC Core</name>
 	<dependencies>
 		<dependency>
@@ -32,6 +32,20 @@
 			<version>2.2.2</version>
 			<type>jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>3.3.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm-tree</artifactId>
+			<version>3.3.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>

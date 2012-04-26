@@ -7,14 +7,18 @@ package com.khubla.simpleioc.impl;
  */
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.objectweb.asm.tree.ClassNode;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.annotation.RegistryBean;
 import com.khubla.simpleioc.annotation.RegistryFilter;
+import com.khubla.simpleioc.classlibrary.AnnotationScanner;
+import com.khubla.simpleioc.classlibrary.ClassLibrary;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.filter.IOCInstantiationFilter;
 
@@ -100,7 +104,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          /*
           * get all classes
           */
-         final Class<?>[] classes = PackageUtil.getClasses();
+         final Hashtable<String, ClassNode> classes = ClassLibrary.getInstance().getClasses();
          /*
           * walk classes
           */
@@ -108,102 +112,95 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
             /*
              * message
              */
-            log.info("scanning '" + classes.length + "' classes");
-            for (int i = 0; i < classes.length; i++) {
+            log.info("scanning '" + classes.size() + "' classes");
+            final List<Class<?>> beanClasses = AnnotationScanner.getAnnotatedClasses(classes, RegistryBean.class);
+            for (final Class<?> cls : beanClasses) {
+               final RegistryBean registryBeanAnnotation = cls.getAnnotation(RegistryBean.class);
                /*
-                * class
+                * bean name
                 */
-               final Class<?> clazz = classes[i];
-               /*
-                * marked with the annotation?
-                */
-               final RegistryBean ro = clazz.getAnnotation(RegistryBean.class);
-               if (null != ro) {
+               String beanName = registryBeanAnnotation.name();
+               if (beanName.length() == 0) {
                   /*
-                   * bean name
+                   * use the class name
                    */
-                  String beanName = ro.name();
-                  if (beanName.length() == 0) {
-                     /*
-                      * use the class name
-                      */
-                     beanName = clazz.getSimpleName();
-                     beanName = Character.toLowerCase(beanName.charAt(0)) + beanName.substring(1);
-                  }
-                  /*
-                   * iterate the profiles
-                   */
-                  for (final String profileName : ro.profiles()) {
-                     /*
-                      * check if we already have a bean with that name
-                      */
-                     Profile profile = profiles.get(profileName);
-                     if ((null != profile) && (profile.hasBeanDefinition(beanName))) {
-                        /*
-                         * log a message
-                         */
-                        log.info("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + beanName + "' already exists and is of type '"
-                              + profile.getBeanDefinition(beanName).getClassName()
-                              + "'");
-                        /*
-                         * explode
-                         */
-                        throw new IOCException("Cannot add bean of type '" + clazz.getName() + "'.  Bean with name '" + beanName + "' already exists and is of type '"
-                              + profile.getBeanDefinition(beanName).getClassName()
-                              + "'");
-                     }
-                     else {
-                        /*
-                         * log
-                         */
-                        log.info("adding bean definition '" + clazz.getName() + "' with name '" + beanName + "' to profile '" + profileName + "'");
-                        /*
-                         * add it
-                         */
-                        final Bean bean = new Bean();
-                        bean.setClazz(clazz);
-                        bean.setClassName(clazz.getName());
-                        bean.setName(beanName);
-                        bean.setProfile(profileName);
-                        bean.setAutocreate(ro.autocreate());
-                        bean.setCache(ro.cached());
-                        bean.setThreadlocal(ro.threadlocal());
-                        if (null == profile) {
-                           profile = new Profile(profileName, this);
-                           profiles.put(profileName, profile);
-                        }
-                        profile.addBeanDefinition(bean);
-                     }
-                  }
+                  beanName = cls.getSimpleName();
+                  beanName = Character.toLowerCase(beanName.charAt(0)) + beanName.substring(1);
                }
                /*
-                * filters
+                * iterate the profiles
                 */
-               final RegistryFilter filter = clazz.getAnnotation(RegistryFilter.class);
-               if (null != filter) {
+               for (final String profileName : registryBeanAnnotation.profiles()) {
                   /*
-                   * create
+                   * check if we already have a bean with that name
                    */
-                  final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(clazz, null);
-                  /*
-                   * iterate the profiles
-                   */
-                  for (final String profileName : filter.profiles()) {
+                  Profile profile = profiles.get(profileName);
+                  if ((null != profile) && (profile.hasBeanDefinition(beanName))) {
+                     /*
+                      * log a message
+                      */
+                     log.info("Cannot add bean of type '" + cls.getName() + "'.  Bean with name '" + beanName + "' already exists and is of type '"
+                           + profile.getBeanDefinition(beanName).getClassName()
+                           + "'");
+                     /*
+                      * explode
+                      */
+                     throw new IOCException("Cannot add bean of type '" + cls.getName() + "'.  Bean with name '" + beanName + "' already exists and is of type '"
+                           + profile.getBeanDefinition(beanName).getClassName()
+                           + "'");
+                  }
+                  else {
                      /*
                       * log
                       */
-                     log.info("adding filter '" + clazz.getName() + "' to profile '" + profileName + "'");
+                     log.info("adding bean definition '" + cls.getName() + "' with name '" + beanName + "' to profile '" + profileName + "'");
                      /*
                       * add it
                       */
-                     Profile profile = profiles.get(profileName);
+                     final Bean bean = new Bean();
+                     bean.setClazz(cls);
+                     bean.setClassName(cls.getName());
+                     bean.setName(beanName);
+                     bean.setProfile(profileName);
+                     bean.setAutocreate(registryBeanAnnotation.autocreate());
+                     bean.setCache(registryBeanAnnotation.cached());
+                     bean.setThreadlocal(registryBeanAnnotation.threadlocal());
                      if (null == profile) {
                         profile = new Profile(profileName, this);
                         profiles.put(profileName, profile);
                      }
-                     profile.addFilter(iocInstantiationFilter);
+                     profile.addBeanDefinition(bean);
                   }
                }
+            }
+         }
+         /*
+          * filters
+          */
+         final List<Class<?>> beanClasses = AnnotationScanner.getAnnotatedClasses(classes, RegistryFilter.class);
+         for (final Class<?> cls : beanClasses) {
+            final RegistryFilter registryFilterAnnotation = cls.getAnnotation(RegistryFilter.class);
+            /*
+             * create
+             */
+            final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(cls, null);
+            /*
+             * iterate the profiles
+             */
+            for (final String profileName : registryFilterAnnotation.profiles()) {
+               /*
+                * log
+                */
+               log.info("adding filter '" + cls.getName() + "' to profile '" + profileName + "'");
+               /*
+                * add it
+                */
+               Profile profile = profiles.get(profileName);
+               if (null == profile) {
+                  profile = new Profile(profileName, this);
+                  profiles.put(profileName, profile);
+               }
+               profile.addFilter(iocInstantiationFilter);
             }
          }
       } catch (final Exception e) {
