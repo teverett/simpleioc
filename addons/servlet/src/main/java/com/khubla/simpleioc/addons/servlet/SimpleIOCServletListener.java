@@ -12,7 +12,7 @@ public class SimpleIOCServletListener implements ServletContextListener {
    /**
     * good to know
     */
-   private final static String LIBS = "WEB-INF/";
+   private final static String LIBS = "WEB-INF/classes/";
 
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
       // TODO Auto-generated method stub
