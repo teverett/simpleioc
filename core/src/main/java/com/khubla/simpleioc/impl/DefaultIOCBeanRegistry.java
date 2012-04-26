@@ -12,12 +12,10 @@ import java.util.List;
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.objectweb.asm.tree.ClassNode;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.annotation.RegistryBean;
 import com.khubla.simpleioc.annotation.RegistryFilter;
-import com.khubla.simpleioc.classlibrary.AnnotationScanner;
 import com.khubla.simpleioc.classlibrary.ClassLibrary;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.filter.IOCInstantiationFilter;
@@ -102,20 +100,12 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
    private void scanPackages() throws IOCException {
       try {
          /*
-          * get all classes
+          * message
           */
-         final Hashtable<String, ClassNode> classes = ClassLibrary.getInstance().getClasses();
-         /*
-          * walk classes
-          */
-         if (null != classes) {
-            /*
-             * message
-             */
-            log.info("scanning '" + classes.size() + "' classes");
-            final List<Class<?>> beanClasses = AnnotationScanner.getAnnotatedClasses(classes, RegistryBean.class);
-            for (final Class<?> cls : beanClasses) {
-               final RegistryBean registryBeanAnnotation = cls.getAnnotation(RegistryBean.class);
+         final List<Class<?>> beanClasses = ClassLibrary.getInstance().getClasses();
+         for (final Class<?> cls : beanClasses) {
+            final RegistryBean registryBeanAnnotation = cls.getAnnotation(RegistryBean.class);
+            if (null != registryBeanAnnotation) {
                /*
                 * bean name
                 */
@@ -177,30 +167,31 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          /*
           * filters
           */
-         final List<Class<?>> beanClasses = AnnotationScanner.getAnnotatedClasses(classes, RegistryFilter.class);
          for (final Class<?> cls : beanClasses) {
             final RegistryFilter registryFilterAnnotation = cls.getAnnotation(RegistryFilter.class);
-            /*
-             * create
-             */
-            final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(cls, null);
-            /*
-             * iterate the profiles
-             */
-            for (final String profileName : registryFilterAnnotation.profiles()) {
+            if (null != registryFilterAnnotation) {
                /*
-                * log
+                * create
                 */
-               log.info("adding filter '" + cls.getName() + "' to profile '" + profileName + "'");
+               final IOCInstantiationFilter iocInstantiationFilter = (IOCInstantiationFilter) ConstructorUtils.invokeConstructor(cls, null);
                /*
-                * add it
+                * iterate the profiles
                 */
-               Profile profile = profiles.get(profileName);
-               if (null == profile) {
-                  profile = new Profile(profileName, this);
-                  profiles.put(profileName, profile);
+               for (final String profileName : registryFilterAnnotation.profiles()) {
+                  /*
+                   * log
+                   */
+                  log.info("adding filter '" + cls.getName() + "' to profile '" + profileName + "'");
+                  /*
+                   * add it
+                   */
+                  Profile profile = profiles.get(profileName);
+                  if (null == profile) {
+                     profile = new Profile(profileName, this);
+                     profiles.put(profileName, profile);
+                  }
+                  profile.addFilter(iocInstantiationFilter);
                }
-               profile.addFilter(iocInstantiationFilter);
             }
          }
       } catch (final Exception e) {

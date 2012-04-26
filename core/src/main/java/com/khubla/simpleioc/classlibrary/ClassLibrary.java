@@ -7,14 +7,19 @@ package com.khubla.simpleioc.classlibrary;
  */
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+
+import com.khubla.simpleioc.annotation.RegistryBean;
+import com.khubla.simpleioc.annotation.RegistryFilter;
 
 /**
  * @author tome
@@ -51,7 +56,7 @@ public class ClassLibrary {
    /**
     * the classes
     */
-   private final Hashtable<String, ClassNode> classes;
+   private final List<Class<?>> classes;
    /**
     * the actual path to the war file classes
     */
@@ -65,7 +70,7 @@ public class ClassLibrary {
     * ctor
     */
    private ClassLibrary() {
-      Hashtable<String, ClassNode> ret = null;
+      List<Class<?>> ret = null;
       try {
          ret = discoverClasses();
       } catch (final Exception e) {
@@ -77,12 +82,12 @@ public class ClassLibrary {
    /**
     * find all the classes in a jar file
     */
-   private Hashtable<String, ClassNode> crackJar(String jarfile) throws Exception {
+   private List<Class<?>> crackJar(String jarfile) throws Exception {
       try {
          /*
           * the ret
           */
-         final Hashtable<String, ClassNode> ret = new Hashtable<String, ClassNode>();
+         final List<Class<?>> ret = new ArrayList<Class<?>>();
          /*
           * the jar
           */
@@ -95,8 +100,10 @@ public class ClassLibrary {
                   final ClassNode classNode = new ClassNode();
                   final ClassReader cr = new ClassReader(zip_inputstream);
                   cr.accept(classNode, 0);
-                  ret.put(classNode.name.replaceAll("/", "."), classNode);
-                  log.debug(classNode.name);
+                  if (annotated(classNode)) {
+                     ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
+                     log.debug(classNode.name);
+                  }
                }
             }
          }
@@ -111,12 +118,12 @@ public class ClassLibrary {
    /**
     * find all classes
     */
-   private Hashtable<String, ClassNode> discoverClasses() throws Exception {
+   private List<Class<?>> discoverClasses() throws Exception {
       try {
          /*
           * collection of all classes
           */
-         final Hashtable<String, ClassNode> classes = new Hashtable<String, ClassNode>();
+         final List<Class<?>> classes = new ArrayList<Class<?>>();
          /*
           * scan the war
           */
@@ -130,7 +137,7 @@ public class ClassLibrary {
          final String list = System.getProperty("java.class.path");
          for (final String path : list.split(pathSep)) {
             final File file = new File(path);
-            classes.putAll(scan(file, ""));
+            classes.addAll(scan(file, ""));
          }
          /*
           * done
@@ -141,19 +148,19 @@ public class ClassLibrary {
       }
    }
 
-   public Hashtable<String, ClassNode> getClasses() {
+   public List<Class<?>> getClasses() {
       return classes;
    }
 
    /**
     * scan a given directory
     */
-   private Hashtable<String, ClassNode> scan(File file, String concatenatedName) throws Exception {
+   private List<Class<?>> scan(File file, String concatenatedName) throws Exception {
       try {
          /*
           * collection of all classes
           */
-         final Hashtable<String, ClassNode> ret = new Hashtable<String, ClassNode>();
+         final List<Class<?>> ret = new ArrayList<Class<?>>();
          if (file.isDirectory()) {
             final File[] files = file.listFiles();
             if (null != files) {
@@ -161,9 +168,9 @@ public class ClassLibrary {
                   if (false == f.isHidden()) {
                      if (f.isDirectory()) {
                         log.debug("scanning '" + file.getAbsolutePath() + "'");
-                        ret.putAll(scan(f, concatenatedName + f.getName() + "."));
+                        ret.addAll(scan(f, concatenatedName + f.getName() + "."));
                      } else {
-                        ret.putAll(scan(f, concatenatedName + f.getName()));
+                        ret.addAll(scan(f, concatenatedName + f.getName()));
                      }
                   }
                }
@@ -176,10 +183,12 @@ public class ClassLibrary {
                final ClassNode classNode = new ClassNode();
                final ClassReader cr = new ClassReader(new FileInputStream(file.getAbsolutePath()));
                cr.accept(classNode, 0);
-               ret.put(classNode.name.replaceAll("/", "."), classNode);
-               log.debug(classNode.name);
+               if (annotated(classNode)) {
+                  ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
+                  log.debug(classNode.name);
+               }
             } else if (file.getName().endsWith(JAR)) {
-               ret.putAll(crackJar(file.getAbsolutePath()));
+               ret.addAll(crackJar(file.getAbsolutePath()));
             }
          }
          /*
@@ -188,6 +197,44 @@ public class ClassLibrary {
          return ret;
       } catch (final Exception e) {
          throw new Exception("Exception in scan", e);
+      }
+   }
+
+   private boolean annotated(ClassNode classNode) throws Exception {
+      try {
+         if (hasAnnotation(classNode, RegistryBean.class) || (hasAnnotation(classNode, RegistryFilter.class))) {
+            return true;
+         }
+         return false;
+      } catch (Exception e) {
+         throw new Exception("Exception in annnotated", e);
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   private boolean hasAnnotation(ClassNode classNode, Class<?> annotation) throws Exception {
+      try {
+         /*
+          * walk annotations
+          */
+         final List<AnnotationNode> annotations = classNode.visibleAnnotations;
+         if (null != annotations) {
+            for (final AnnotationNode annotationNode : annotations) {
+               /*
+                * get the class name
+                */
+               final String annotationClassName = annotationNode.desc.replaceAll("/", ".").substring(1, annotationNode.desc.length() - 1);
+               /*
+                * check
+                */
+               if (annotationClassName.compareTo(annotation.getName()) == 0) {
+                  return true;
+               }
+            }
+         }
+         return false;
+      } catch (final Exception e) {
+         throw new Exception("Exception in hasAnnotation", e);
       }
    }
 }
