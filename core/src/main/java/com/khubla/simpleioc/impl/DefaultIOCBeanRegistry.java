@@ -35,17 +35,25 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 
    public Object getBean(String name) throws IOCException {
       try {
-         return this.getBean(name, DEFAULT_PROFILE);
+         Object ret = this.getBean(name, DEFAULT_PROFILE);
+         if (null == ret) {
+            ret = this.getBean(name, ALL_PROFILES);
+         }
+         return ret;
       } catch (final Exception e) {
-         throw new IOCException("Exception in getBean", e);
+         throw new IOCException("Exception in getBean '" + name + "'", e);
       }
    }
 
    public <T> T getBean(String name, Class<T> clazz) throws IOCException {
       try {
-         return this.getBean(name, clazz, DEFAULT_PROFILE);
+         T ret = this.getBean(name, clazz, DEFAULT_PROFILE);
+         if (null == ret) {
+            ret = this.getBean(name, clazz, ALL_PROFILES);
+         }
+         return ret;
       } catch (final Exception e) {
-         throw new IOCException("Exception in getBean", e);
+         throw new IOCException("Exception in getBean '" + name + "'", e);
       }
    }
 
@@ -57,7 +65,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          }
          return null;
       } catch (final Exception e) {
-         throw new IOCException("Exception in getBean", e);
+         throw new IOCException("Exception in getBean '" + name + " in profile '" + profile + "'", e);
       }
    }
 
@@ -69,7 +77,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          }
          return null;
       } catch (final Exception e) {
-         throw new IOCException("Exception in getBean", e);
+         throw new IOCException("Exception in getBean '" + name + " in profile '" + profile + "'", e);
       }
    }
 

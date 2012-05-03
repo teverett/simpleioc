@@ -79,6 +79,17 @@ public class ClassLibrary {
       classes = ret;
    }
 
+   private boolean annotated(ClassNode classNode) throws Exception {
+      try {
+         if (hasAnnotation(classNode, RegistryBean.class) || (hasAnnotation(classNode, RegistryFilter.class))) {
+            return true;
+         }
+         return false;
+      } catch (final Exception e) {
+         throw new Exception("Exception in annnotated", e);
+      }
+   }
+
    /**
     * find all the classes in a jar file
     */
@@ -102,7 +113,7 @@ public class ClassLibrary {
                   cr.accept(classNode, 0);
                   if (annotated(classNode)) {
                      ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
-                     log.debug(classNode.name);
+                     log.debug("Found " + classNode.name + " in " + jarfile);
                   }
                }
             }
@@ -128,7 +139,7 @@ public class ClassLibrary {
           * scan the war
           */
          if (null != warPath) {
-            scan(new File(warPath), "");
+            classes.addAll(scan(new File(warPath), ""));
          }
          /*
           * scan all the jars on the class path
@@ -150,65 +161,6 @@ public class ClassLibrary {
 
    public List<Class<?>> getClasses() {
       return classes;
-   }
-
-   /**
-    * scan a given directory
-    */
-   private List<Class<?>> scan(File file, String concatenatedName) throws Exception {
-      try {
-         /*
-          * collection of all classes
-          */
-         final List<Class<?>> ret = new ArrayList<Class<?>>();
-         if (file.isDirectory()) {
-            final File[] files = file.listFiles();
-            if (null != files) {
-               for (final File f : files) {
-                  if (false == f.isHidden()) {
-                     if (f.isDirectory()) {
-                        log.debug("scanning '" + file.getAbsolutePath() + "'");
-                        ret.addAll(scan(f, concatenatedName + f.getName() + "."));
-                     } else {
-                        ret.addAll(scan(f, concatenatedName + f.getName()));
-                     }
-                  }
-               }
-            }
-         } else {
-            /*
-             * its a file, could be a class file or a jar file, or neither
-             */
-            if (file.getName().endsWith(CLASS)) {
-               final ClassNode classNode = new ClassNode();
-               final ClassReader cr = new ClassReader(new FileInputStream(file.getAbsolutePath()));
-               cr.accept(classNode, 0);
-               if (annotated(classNode)) {
-                  ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
-                  log.debug(classNode.name);
-               }
-            } else if (file.getName().endsWith(JAR)) {
-               ret.addAll(crackJar(file.getAbsolutePath()));
-            }
-         }
-         /*
-          * done
-          */
-         return ret;
-      } catch (final Exception e) {
-         throw new Exception("Exception in scan", e);
-      }
-   }
-
-   private boolean annotated(ClassNode classNode) throws Exception {
-      try {
-         if (hasAnnotation(classNode, RegistryBean.class) || (hasAnnotation(classNode, RegistryFilter.class))) {
-            return true;
-         }
-         return false;
-      } catch (Exception e) {
-         throw new Exception("Exception in annnotated", e);
-      }
    }
 
    @SuppressWarnings("unchecked")
@@ -235,6 +187,54 @@ public class ClassLibrary {
          return false;
       } catch (final Exception e) {
          throw new Exception("Exception in hasAnnotation", e);
+      }
+   }
+
+   /**
+    * scan a given directory
+    */
+   private List<Class<?>> scan(File file, String concatenatedName) throws Exception {
+      try {
+         log.debug("scanning directory'" + file.getAbsolutePath() + "'");
+         /*
+          * collection of all classes
+          */
+         final List<Class<?>> ret = new ArrayList<Class<?>>();
+         if (file.isDirectory()) {
+            final File[] files = file.listFiles();
+            if (null != files) {
+               for (final File f : files) {
+                  if (false == f.isHidden()) {
+                     if (f.isDirectory()) {
+                        ret.addAll(scan(f, concatenatedName + f.getName() + "."));
+                     } else {
+                        ret.addAll(scan(f, concatenatedName + f.getName()));
+                     }
+                  }
+               }
+            }
+         } else {
+            /*
+             * its a file, could be a class file or a jar file, or neither
+             */
+            if (file.getName().endsWith(CLASS)) {
+               final ClassNode classNode = new ClassNode();
+               final ClassReader cr = new ClassReader(new FileInputStream(file.getAbsolutePath()));
+               cr.accept(classNode, 0);
+               if (annotated(classNode)) {
+                  ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
+                  log.debug("adding " + classNode.name + " from " + file.getAbsolutePath());
+               }
+            } else if (file.getName().endsWith(JAR)) {
+               ret.addAll(crackJar(file.getAbsolutePath()));
+            }
+         }
+         /*
+          * done
+          */
+         return ret;
+      } catch (final Exception e) {
+         throw new Exception("Exception in scan", e);
       }
    }
 }
