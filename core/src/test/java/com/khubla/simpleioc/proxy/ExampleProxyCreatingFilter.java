@@ -7,18 +7,18 @@ package com.khubla.simpleioc.proxy;
  */
 import net.sf.cglib.proxy.Enhancer;
 
-import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.filter.ExampleIterceptor;
 import com.khubla.simpleioc.filter.IOCInstantiationFilter;
 import com.khubla.simpleioc.impl.Bean;
+import com.khubla.simpleioc.impl.Profile;
 
 /**
  * @author tome
  */
 // @RegistryFilter()
 public class ExampleProxyCreatingFilter implements IOCInstantiationFilter {
-   public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, Object originalObject, Bean bean) throws IOCException {
+   public Object filter(Profile profile, Object object, Object originalObject, Bean bean) throws IOCException {
       try {
          final Enhancer e = new Enhancer();
          e.setSuperclass(object.getClass());

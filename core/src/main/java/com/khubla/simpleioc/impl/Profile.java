@@ -10,7 +10,6 @@ import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.filter.IOCInstantiationFilter;
 
@@ -18,10 +17,6 @@ import com.khubla.simpleioc.filter.IOCInstantiationFilter;
  * @author tome
  */
 public class Profile {
-   /**
-    * bean registry
-    */
-   private final IOCBeanRegistry iocBeanRegistry;
    /**
     * name
     */
@@ -50,8 +45,7 @@ public class Profile {
    /**
     * ctor
     */
-   public Profile(String name, IOCBeanRegistry iocBeanRegistry) {
-      this.iocBeanRegistry = iocBeanRegistry;
+   public Profile(String name) {
       this.name = name;
    }
 
@@ -214,7 +208,7 @@ public class Profile {
          /*
           * perform jsr 330 injections
           */
-         final InjectUtil injectUtil = new InjectUtil(iocBeanRegistry);
+         final InjectUtil injectUtil = new InjectUtil(this);
          o = injectUtil.performJSR330Injection(o);
          /*
           * filter
@@ -268,7 +262,7 @@ public class Profile {
                /*
                 * filter
                 */
-               ret = filter.filter(iocBeanRegistry, ret, object, bean);
+               ret = filter.filter(this, ret, object, bean);
             } catch (final Exception e) {
                throw new Exception("Exception in filter of type '" + filter.getClass().getName() + "'", e);
             }

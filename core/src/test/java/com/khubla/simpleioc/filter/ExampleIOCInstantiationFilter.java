@@ -7,14 +7,14 @@ package com.khubla.simpleioc.filter;
  */
 import net.sf.cglib.proxy.Enhancer;
 
-import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.annotation.RegistryFilter;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.impl.Bean;
+import com.khubla.simpleioc.impl.Profile;
 
 @RegistryFilter()
 public class ExampleIOCInstantiationFilter implements IOCInstantiationFilter {
-   public Object filter(IOCBeanRegistry iocBeanRegistry, Object object, final Object originalObject, Bean bean) throws IOCException {
+   public Object filter(Profile profile, Object object, final Object originalObject, Bean bean) throws IOCException {
       try {
          final Enhancer e = new Enhancer();
          e.setSuperclass(object.getClass());

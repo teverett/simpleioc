@@ -162,7 +162,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                      bean.setThreadlocal(registryBeanAnnotation.threadlocal());
                      bean.setGlobal(registryBeanAnnotation.global());
                      if (null == profile) {
-                        profile = new Profile(profileName, this);
+                        profile = new Profile(profileName);
                         profiles.put(profileName, profile);
                      }
                      profile.addBeanDefinition(bean);
@@ -206,7 +206,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                    */
                   Profile profile = profiles.get(profileName);
                   if (null == profile) {
-                     profile = new Profile(profileName, this);
+                     profile = new Profile(profileName);
                      profiles.put(profileName, profile);
                   }
                   profile.addFilter(iocInstantiationFilter);
@@ -215,6 +215,14 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
          }
       } catch (final Exception e) {
          throw new IOCException("Exception in scanPackage", e);
+      }
+   }
+
+   public Profile getProfile(String name) throws IOCException {
+      try {
+         return this.profiles.get(name);
+      } catch (Exception e) {
+         throw new IOCException("Exception in getProfile for '" + name + "'", e);
       }
    }
 }

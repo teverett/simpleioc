@@ -8,7 +8,6 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.exception.IOCException;
 
 /**
@@ -16,15 +15,15 @@ import com.khubla.simpleioc.exception.IOCException;
  */
 public class InjectUtil {
    /**
-    * IOC
+    * IOC Profile
     */
-   private final IOCBeanRegistry iocBeanRegistry;
+   private final Profile profile;
 
    /**
     * ctor
     */
-   public InjectUtil(IOCBeanRegistry iocBeanRegistry) {
-      this.iocBeanRegistry = iocBeanRegistry;
+   public InjectUtil(Profile profile) {
+      this.profile = profile;
    }
 
    /**
@@ -47,7 +46,7 @@ public class InjectUtil {
                 */
                final Annotation annotation = fields[i].getAnnotation(Inject.class);
                if (null != annotation) {
-                  ret = processInject(iocBeanRegistry, ret, fields[i], (Inject) annotation);
+                  ret = processInject(profile, ret, fields[i], (Inject) annotation);
                }
             }
          }
@@ -57,7 +56,7 @@ public class InjectUtil {
       }
    }
 
-   private Object processInject(final IOCBeanRegistry iocBeanRegistry, Object object, Field field, Inject inject) throws IOCException {
+   private Object processInject(final Profile profile, Object object, Field field, Inject inject) throws IOCException {
       try {
          /*
           * the default name of the bean we want is the field name
@@ -73,7 +72,7 @@ public class InjectUtil {
          /*
           * get the bean
           */
-         final Object injectBean = iocBeanRegistry.getBean(name);
+         final Object injectBean = profile.getBean(name);
          if (null != injectBean) {
             /*
              * set value

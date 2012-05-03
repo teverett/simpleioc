@@ -5,9 +5,9 @@ package com.khubla.simpleioc.filter;
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
  * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-import com.khubla.simpleioc.IOCBeanRegistry;
 import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.impl.Bean;
+import com.khubla.simpleioc.impl.Profile;
 
 /**
  * @author tome
@@ -16,5 +16,5 @@ public interface IOCInstantiationFilter {
    /**
     * filter. Return the object, or a proxy to it.
     */
-   Object filter(final IOCBeanRegistry iocBeanRegistry, final Object object, final Object originalObject, final Bean bean) throws IOCException;
+   Object filter(final Profile profile, final Object object, final Object originalObject, final Bean bean) throws IOCException;
 }

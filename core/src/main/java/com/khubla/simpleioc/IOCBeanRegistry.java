@@ -6,6 +6,7 @@ package com.khubla.simpleioc;
  * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 import com.khubla.simpleioc.exception.IOCException;
+import com.khubla.simpleioc.impl.Profile;
 
 /**
  * @author tome
@@ -40,4 +41,9 @@ public interface IOCBeanRegistry {
     * load bean definitions
     */
    void load() throws IOCException;
+
+   /**
+    * get profile
+    */
+   Profile getProfile(String name) throws IOCException;
 }
