@@ -5,6 +5,7 @@ package com.khubla.simpleioc.impl;
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
  * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -35,11 +36,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 
    public Object getBean(String name) throws IOCException {
       try {
-         Object ret = this.getBean(name, DEFAULT_PROFILE);
-         if (null == ret) {
-            ret = this.getBean(name, ALL_PROFILES);
-         }
-         return ret;
+         return this.getBean(name, DEFAULT_PROFILE);
       } catch (final Exception e) {
          throw new IOCException("Exception in getBean '" + name + "'", e);
       }
@@ -47,11 +44,7 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
 
    public <T> T getBean(String name, Class<T> clazz) throws IOCException {
       try {
-         T ret = this.getBean(name, clazz, DEFAULT_PROFILE);
-         if (null == ret) {
-            ret = this.getBean(name, clazz, ALL_PROFILES);
-         }
-         return ret;
+         return this.getBean(name, clazz, DEFAULT_PROFILE);
       } catch (final Exception e) {
          throw new IOCException("Exception in getBean '" + name + "'", e);
       }
@@ -126,6 +119,10 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                   beanName = Character.toLowerCase(beanName.charAt(0)) + beanName.substring(1);
                }
                /*
+                * global beans (collect them up)
+                */
+               ArrayList<Bean> globalBeans = new ArrayList<Bean>();
+               /*
                 * iterate the profiles
                 */
                for (final String profileName : registryBeanAnnotation.profiles()) {
@@ -163,11 +160,25 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                      bean.setAutocreate(registryBeanAnnotation.autocreate());
                      bean.setCache(registryBeanAnnotation.cached());
                      bean.setThreadlocal(registryBeanAnnotation.threadlocal());
+                     bean.setGlobal(registryBeanAnnotation.global());
                      if (null == profile) {
                         profile = new Profile(profileName, this);
                         profiles.put(profileName, profile);
                      }
                      profile.addBeanDefinition(bean);
+                     if (bean.isGlobal()) {
+                        globalBeans.add(bean);
+                     }
+                  }
+               }
+               /*
+                * add the global beans to all profiles
+                */
+               for (Bean bean : globalBeans) {
+                  for (Profile profile : this.profiles.values()) {
+                     if (false == profile.hasBeanDefinition(bean.getName())) {
+                        profile.addBeanDefinition(bean);
+                     }
                   }
                }
             }

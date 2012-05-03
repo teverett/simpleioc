@@ -11,6 +11,15 @@ public class Bean {
    private String name;
    private String profile;
    private Class<?> clazz;
+   private boolean global;
+
+   public boolean isGlobal() {
+      return global;
+   }
+
+   public void setGlobal(boolean global) {
+      this.global = global;
+   }
 
    public String getClassName() {
       return className;

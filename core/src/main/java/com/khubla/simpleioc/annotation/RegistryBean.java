@@ -42,4 +42,9 @@ public @interface RegistryBean {
     * bean is cached thread-local?
     */
    boolean threadlocal() default false;
+
+   /**
+    * global (exists in all profiles)
+    */
+   boolean global() default false;
 }

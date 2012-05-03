@@ -15,10 +15,6 @@ public interface IOCBeanRegistry {
     * default profile
     */
    public final static String DEFAULT_PROFILE = "default";
-   /**
-    * all profiles
-    */
-   public final static String ALL_PROFILES = "all";
 
    /**
     * get a bean
