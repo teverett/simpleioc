@@ -101,6 +101,10 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
    private void scanPackages() throws IOCException {
       try {
          /*
+          * global beans (collect them up)
+          */
+         ArrayList<Bean> globalBeans = new ArrayList<Bean>();
+         /*
           * message
           */
          final List<Class<?>> beanClasses = ClassLibrary.getInstance().getClasses();
@@ -118,10 +122,6 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                   beanName = cls.getSimpleName();
                   beanName = Character.toLowerCase(beanName.charAt(0)) + beanName.substring(1);
                }
-               /*
-                * global beans (collect them up)
-                */
-               ArrayList<Bean> globalBeans = new ArrayList<Bean>();
                /*
                 * iterate the profiles
                 */
@@ -171,15 +171,15 @@ public class DefaultIOCBeanRegistry implements IOCBeanRegistry {
                      }
                   }
                }
-               /*
-                * add the global beans to all profiles
-                */
-               for (Bean bean : globalBeans) {
-                  for (Profile profile : this.profiles.values()) {
-                     if (false == profile.hasBeanDefinition(bean.getName())) {
-                        profile.addBeanDefinition(bean);
-                     }
-                  }
+            }
+         }
+         /*
+          * add the global beans to all profiles
+          */
+         for (Bean bean : globalBeans) {
+            for (Profile profile : this.profiles.values()) {
+               if (false == profile.hasBeanDefinition(bean.getName())) {
+                  profile.addBeanDefinition(bean);
                }
             }
          }
