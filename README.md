@@ -63,6 +63,7 @@ Addons Available
 * simpleioc-struts.  Support for injection of JSR330 beans into Strut2 Actions
 * simpleioc-testng.  Support for TestNG Testing
 * simpleioc-junit.   Support for JUnit Testing
+* simpleioc-servlet. Support for Servlets
 
 Travis Status
 -------------------
