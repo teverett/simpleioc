@@ -8,9 +8,7 @@
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.3</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<version>1.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -22,9 +20,7 @@
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.4</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<version>6.9.9</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
