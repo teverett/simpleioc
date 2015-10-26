@@ -67,7 +67,7 @@ Addons Available
 Travis Status
 -------------------
 
-<a href="https://travis-ci.org/teverett/simpleioc"><img src="https://api.travis-ci.org/teverett/simpleioc"></a>
+<a href="https://travis-ci.org/teverett/simpleioc"><img src="https://api.travis-ci.org/teverett/simpleioc.png"></a>
 
 
 
