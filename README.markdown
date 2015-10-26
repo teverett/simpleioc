@@ -64,6 +64,13 @@ Addons Available
 * simpleioc-testng.  Support for TestNG Testing
 * simpleioc-junit.   Support for JUnit Testing
 
+Travis Status
+-------------------
+
+<a href="https://travis-ci.org/teverett/simpleioc"><img src="https://api.travis-ci.org/teverett/simpleioc"></a>
+
+
+
 
 
 
