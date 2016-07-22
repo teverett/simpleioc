@@ -21,7 +21,7 @@ Defining a Bean in code:
 	}
 
 
-Injection via JCR330
+Injection via JSR330
 -------------------
 
 	@Inject()
