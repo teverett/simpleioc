@@ -13,6 +13,17 @@ Configurable bean properties include
 * ThreadLocal beans
 * autocreation
 
+Maven Coordinates
+-------------------
+
+```
+<groupId>com.khubla.simpleioc</groupId>
+<artifactId>simpleioc-core</artifactId>
+<version>1.0</version>
+<packaging>jar</packaging>
+```
+
+
 Defining a Bean in code:
 -------------------
 

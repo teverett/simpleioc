@@ -1,7 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>simpleioc-junit</artifactId>
-	<version>1.0.7-SNAPSHOT</version>
 	<name>khubla.com Simple IOC JUnit Addon</name>
 	<parent>
 		<groupId>com.khubla.simpleioc</groupId>
@@ -13,7 +12,7 @@
 		<dependency>
 			<groupId>com.khubla.simpleioc</groupId>
 			<artifactId>simpleioc-core</artifactId>
-			<version>1.0.26-SNAPSHOT</version>
+			<version>${parent.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -23,10 +22,4 @@
 			<version>4.12</version>
 		</dependency>
 	</dependencies>
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<url>file:///${basedir}/../../maven/repository/</url>
-		</repository>
-	</distributionManagement>
 </project>

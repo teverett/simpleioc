@@ -32,6 +32,13 @@
 		<module>core</module>
 		<module>addons</module>
 	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.9.10</version>
+		</dependency>
+	</dependencies>
 	<profiles>
 		<profile>
 			<id>deploy</id>
