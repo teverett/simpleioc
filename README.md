@@ -1,7 +1,6 @@
 Simple IOC
 =============
 
-
 Introduction
 -------------------
 
@@ -13,6 +12,17 @@ Configurable bean properties include
 * ThreadLocal beans
 * autocreation
 
+Travis Status
+-------------------
+
+<a href="https://travis-ci.org/teverett/simpleioc"><img src="https://api.travis-ci.org/teverett/simpleioc.png"></a>
+
+Coverity Status
+-------------------
+<a href="https://scan.coverity.com/projects/teverett-simpleioc">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/13284/badge.svg"/>
+</a>
 
 
 Defining a Bean in code:
@@ -66,12 +76,6 @@ Addons Available
 * simpleioc-testng.  Support for TestNG Testing
 * simpleioc-junit.   Support for JUnit Testing
 * simpleioc-servlet. Support for Servlets
-
-Travis Status
--------------------
-
-<a href="https://travis-ci.org/teverett/simpleioc"><img src="https://api.travis-ci.org/teverett/simpleioc.png"></a>
-
 
 
 
