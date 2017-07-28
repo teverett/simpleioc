@@ -104,22 +104,25 @@ public class ClassLibrary {
           */
          final FileInputStream fis = new FileInputStream(jarfile);
          final ZipInputStream zip_inputstream = new ZipInputStream(fis);
-         ZipEntry current_zip_entry = null;
-         while ((current_zip_entry = zip_inputstream.getNextEntry()) != null) {
-            if (current_zip_entry.getName().endsWith(".class")) {
-               if (current_zip_entry.getSize() > 0) {
-                  final ClassNode classNode = new ClassNode();
-                  final ClassReader cr = new ClassReader(zip_inputstream);
-                  cr.accept(classNode, 0);
-                  if (annotated(classNode)) {
-                     ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
-                     log.debug("Found " + classNode.name + " in " + jarfile);
+         try {
+            ZipEntry current_zip_entry = null;
+            while ((current_zip_entry = zip_inputstream.getNextEntry()) != null) {
+               if (current_zip_entry.getName().endsWith(".class")) {
+                  if (current_zip_entry.getSize() > 0) {
+                     final ClassNode classNode = new ClassNode();
+                     final ClassReader cr = new ClassReader(zip_inputstream);
+                     cr.accept(classNode, 0);
+                     if (annotated(classNode)) {
+                        ret.add(Class.forName(classNode.name.replaceAll("/", ".")));
+                        log.debug("Found " + classNode.name + " in " + jarfile);
+                     }
                   }
                }
             }
+         } finally {
+            zip_inputstream.close();
+            fis.close();
          }
-         zip_inputstream.close();
-         fis.close();
          return ret;
       } catch (final Throwable e) {
          throw new Exception("Exception in crackJar for jar '" + jarfile + "'", e);
