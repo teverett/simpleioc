@@ -1,3 +1,7 @@
+[![Travis](https://api.travis-ci.org/teverett/simpleioc.png)](https://travis-ci.org/teverett/simpleioc)
+[![Coverity Scan](https://scan.coverity.com/projects/13284/badge.svg)](https://scan.coverity.com/projects/teverett-simpleioc)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9c0f06b818bd47739ff23a1c0001326c)](https://www.codacy.com/app/teverett/simpleioc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=teverett/simpleioc&amp;utm_campaign=Badge_Grade)
+
 Simple IOC
 =============
 
@@ -11,19 +15,6 @@ Configurable bean properties include
 * caching (singleton)
 * ThreadLocal beans
 * autocreation
-
-Travis Status
--------------------
-
-<a href="https://travis-ci.org/teverett/simpleioc"><img src="https://api.travis-ci.org/teverett/simpleioc.png"></a>
-
-Coverity Status
--------------------
-<a href="https://scan.coverity.com/projects/teverett-simpleioc">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/13284/badge.svg"/>
-</a>
-
 
 Defining a Bean in code:
 -------------------
