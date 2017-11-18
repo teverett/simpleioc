@@ -20,6 +20,7 @@ import org.objectweb.asm.tree.ClassNode;
 
 import com.khubla.simpleioc.annotation.RegistryBean;
 import com.khubla.simpleioc.annotation.RegistryFilter;
+import com.khubla.simpleioc.exception.IOCException;
 
 /**
  * @author tome
@@ -86,7 +87,7 @@ public class ClassLibrary {
          }
          return false;
       } catch (final Exception e) {
-         throw new Exception("Exception in annnotated", e);
+         throw new IOCException("Exception in annnotated", e);
       }
    }
 
@@ -125,7 +126,7 @@ public class ClassLibrary {
          }
          return ret;
       } catch (final Throwable e) {
-         throw new Exception("Exception in crackJar for jar '" + jarfile + "'", e);
+         throw new IOCException("Exception in crackJar for jar '" + jarfile + "'", e);
       }
    }
 
@@ -158,7 +159,7 @@ public class ClassLibrary {
           */
          return classes;
       } catch (final Exception e) {
-         throw new Exception("Exception in discoverClasses", e);
+         throw new IOCException("Exception in discoverClasses", e);
       }
    }
 
@@ -189,7 +190,7 @@ public class ClassLibrary {
          }
          return false;
       } catch (final Exception e) {
-         throw new Exception("Exception in hasAnnotation", e);
+         throw new IOCException("Exception in hasAnnotation", e);
       }
    }
 
@@ -237,7 +238,7 @@ public class ClassLibrary {
           */
          return ret;
       } catch (final Exception e) {
-         throw new Exception("Exception in scan", e);
+         throw new IOCException("Exception in scan", e);
       }
    }
 }

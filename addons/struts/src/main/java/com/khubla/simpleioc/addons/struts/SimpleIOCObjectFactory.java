@@ -3,6 +3,7 @@ package com.khubla.simpleioc.addons.struts;
 import java.util.Map;
 
 import com.khubla.simpleioc.IOCBeanRegistry;
+import com.khubla.simpleioc.exception.IOCException;
 import com.khubla.simpleioc.impl.DefaultIOCBeanRegistry;
 import com.khubla.simpleioc.impl.InjectUtil;
 import com.khubla.simpleioc.impl.Profile;
@@ -29,7 +30,7 @@ public class SimpleIOCObjectFactory extends ObjectFactory {
          InjectUtil injectUtil = new InjectUtil(getProfile());
          return injectUtil.performJSR330Injection(o);
       } catch (final Exception e) {
-         throw new Exception("Exception in buildAction", e);
+         throw new IOCException("Exception in buildAction", e);
       }
    }
 

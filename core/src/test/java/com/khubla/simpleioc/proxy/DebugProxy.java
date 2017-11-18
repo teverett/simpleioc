@@ -7,6 +7,8 @@ package com.khubla.simpleioc.proxy;
  */
 import java.lang.reflect.Method;
 
+import com.khubla.simpleioc.exception.IOCException;
+
 /**
  * @author tome
  */
@@ -23,7 +25,7 @@ public class DebugProxy implements java.lang.reflect.InvocationHandler {
          System.out.println("before method " + m.getName());
          result = m.invoke(obj, args);
       } catch (final Exception e) {
-         throw new RuntimeException("unexpected invocation exception: " + e.getMessage());
+         throw new IOCException("unexpected invocation exception: " + e.getMessage());
       } finally {
          System.out.println("after method " + m.getName());
       }

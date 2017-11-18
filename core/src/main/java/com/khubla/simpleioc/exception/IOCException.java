@@ -19,7 +19,7 @@ public class IOCException extends RuntimeException {
       super(e);
    }
 
-   public IOCException(String s, Exception e) {
+   public IOCException(String s, Throwable e) {
       super(s, e);
    }
 }
