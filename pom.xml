@@ -3,7 +3,7 @@
 	<groupId>com.khubla.simpleioc</groupId>
 	<artifactId>simpleioc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>khubla.com simple IOC</name>
 	<description>SimpleIOC is a simple Inversion of Control Container</description>
 	<url>https://github.com/teverett/simpleioc</url>
@@ -26,7 +26,8 @@
 	</licenses>
 	<scm>
 		<connection>scm:git:https://github.com/teverett/simpleioc.git</connection>
-	</scm>
+	  <tag>simpleioc-1.0</tag>
+  </scm>
 	<organization>
 		<name>khubla.com</name>
 		<url>http://www.khubla.com</url>
