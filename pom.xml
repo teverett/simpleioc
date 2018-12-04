@@ -7,6 +7,9 @@
 	<name>khubla.com simple IOC</name>
 	<description>SimpleIOC is a simple Inversion of Control Container</description>
 	<url>https://github.com/teverett/simpleioc</url>
+	<prerequisites>
+		<maven>3.1.0</maven>
+	</prerequisites>
 	<developers>
 		<developer>
 			<id>teverett</id>
@@ -22,7 +25,7 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://github.com/teverett/simpleioc.git</url>
+		<connection>scm:git:https://github.com/teverett/simpleioc.git</connection>
 	</scm>
 	<organization>
 		<name>khubla.com</name>
@@ -47,7 +50,7 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.7</version>
+						<version>1.6.8</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
@@ -58,7 +61,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
-						<version>2.4</version>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -71,7 +74,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.3</version>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
