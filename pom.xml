@@ -3,13 +3,17 @@
 	<groupId>com.khubla.simpleioc</groupId>
 	<artifactId>simpleioc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>khubla.com simple IOC</name>
 	<description>SimpleIOC is a simple Inversion of Control Container</description>
 	<url>https://github.com/teverett/simpleioc</url>
 	<prerequisites>
 		<maven>3.1.0</maven>
 	</prerequisites>
+	<properties>
+		<target.jvm>1.9</target.jvm>
+		<junit.version>4.13</junit.version>
+	</properties>
 	<developers>
 		<developer>
 			<id>teverett</id>
@@ -26,8 +30,8 @@
 	</licenses>
 	<scm>
 		<connection>scm:git:https://github.com/teverett/simpleioc.git</connection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<organization>
 		<name>khubla.com</name>
 		<url>http://www.khubla.com</url>
@@ -38,11 +42,26 @@
 	</modules>
 	<dependencies>
 		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>${target.jvm}</source>
+					<target>${target.jvm}</target>
+					<release>11</release>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<profiles>
 		<profile>
 			<id>deploy</id>

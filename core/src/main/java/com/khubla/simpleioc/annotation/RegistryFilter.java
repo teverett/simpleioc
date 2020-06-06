@@ -5,12 +5,9 @@ package com.khubla.simpleioc.annotation;
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
  * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
-import com.khubla.simpleioc.IOCBeanRegistry;
+import com.khubla.simpleioc.*;
 
 /**
  * @author tome
@@ -18,8 +15,8 @@ import com.khubla.simpleioc.IOCBeanRegistry;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface RegistryFilter {
-   /**
-    * profiles that this filter is a member of
-    */
-   String[] profiles() default { IOCBeanRegistry.DEFAULT_PROFILE };
+	/**
+	 * profiles that this filter is a member of
+	 */
+	String[] profiles() default { IOCBeanRegistry.DEFAULT_PROFILE };
 }

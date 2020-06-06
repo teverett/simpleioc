@@ -1,5 +1,4 @@
-[![Travis](https://api.travis-ci.org/teverett/simpleioc.png)](https://travis-ci.org/teverett/simpleioc)
-[![Coverity Scan](https://scan.coverity.com/projects/13284/badge.svg)](https://scan.coverity.com/projects/teverett-simpleioc)
+![CI](https://github.com/teverett/simpleioc/workflows/CI/badge.svg)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9c0f06b818bd47739ff23a1c0001326c)](https://www.codacy.com/app/teverett/simpleioc?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=teverett/simpleioc&amp;utm_campaign=Badge_Grade)
 [![DepShield Badge](https://depshield.sonatype.org/badges/teverett/simpleioc/depshield.svg)](https://depshield.github.io)
 

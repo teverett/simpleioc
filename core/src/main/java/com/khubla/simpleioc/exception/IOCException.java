@@ -9,17 +9,17 @@ package com.khubla.simpleioc.exception;
  * @author tome
  */
 public class IOCException extends RuntimeException {
-   private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-   public IOCException(Exception e) {
-      super(e);
-   }
+	public IOCException(Exception e) {
+		super(e);
+	}
 
-   public IOCException(String e) {
-      super(e);
-   }
+	public IOCException(String e) {
+		super(e);
+	}
 
-   public IOCException(String s, Throwable e) {
-      super(s, e);
-   }
+	public IOCException(String s, Throwable e) {
+		super(s, e);
+	}
 }
