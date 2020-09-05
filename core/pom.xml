@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
-		<asm.version>7.2</asm.version>
+		<asm.version>8.0.1</asm.version>
 		<cglib.version>2.2.2</cglib.version>
 	</properties>
 	<dependencies>
