@@ -25,7 +25,7 @@ public class SimpleIOCTestCase {
 	}
 
 	// @Ignore
-	// @BeforeClass
+	// @Before
 	public void processJSR330Injections() {
 		final InjectUtil injectUtil = new InjectUtil(getProfile());
 		injectUtil.performJSR330Injection(this);

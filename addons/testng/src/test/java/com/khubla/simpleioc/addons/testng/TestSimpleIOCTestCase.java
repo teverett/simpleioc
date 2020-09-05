@@ -19,6 +19,7 @@ public class TestSimpleIOCTestCase extends SimpleIOCTestCase {
 		this.exampleInjectableObject = exampleInjectableObject;
 	}
 
+	@Ignore
 	@Test
 	public void test1() {
 		try {
