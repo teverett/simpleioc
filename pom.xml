@@ -11,7 +11,7 @@
 		<maven>3.1.0</maven>
 	</prerequisites>
 	<properties>
-		<target.jvm>1.9</target.jvm>
+		<target.jvm>11</target.jvm>
 		<junit.version>4.13</junit.version>
 	</properties>
 	<developers>
@@ -57,7 +57,6 @@
 				<configuration>
 					<source>${target.jvm}</source>
 					<target>${target.jvm}</target>
-					<release>11</release>
 				</configuration>
 			</plugin>
 		</plugins>
