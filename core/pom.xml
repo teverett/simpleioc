@@ -10,7 +10,7 @@
 	</parent>
 	<properties>
 		<asm.version>8.0.1</asm.version>
-		<cglib.version>2.2.2</cglib.version>
+		<cglib.version>3.3.0</cglib.version>
 	</properties>
 	<dependencies>
 		<dependency>
