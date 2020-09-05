@@ -1,5 +1,7 @@
 package com.khubla.simpleioc.addons.testng;
 
+import org.testng.annotations.*;
+
 import com.khubla.simpleioc.*;
 import com.khubla.simpleioc.impl.*;
 
@@ -25,7 +27,7 @@ public class SimpleIOCTestCase {
 	}
 
 	// @Ignore
-	// @Before
+	@BeforeClass
 	public void processJSR330Injections() {
 		final InjectUtil injectUtil = new InjectUtil(getProfile());
 		injectUtil.performJSR330Injection(this);

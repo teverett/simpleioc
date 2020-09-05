@@ -2,7 +2,8 @@ package com.khubla.simpleioc.addons.testng;
 
 import javax.inject.*;
 
-import org.junit.*;
+import org.testng.*;
+import org.testng.annotations.*;
 
 /**
  * @author tome
@@ -19,7 +20,6 @@ public class TestSimpleIOCTestCase extends SimpleIOCTestCase {
 		this.exampleInjectableObject = exampleInjectableObject;
 	}
 
-	@Ignore
 	@Test
 	public void test1() {
 		try {
