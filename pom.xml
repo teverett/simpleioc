@@ -12,7 +12,7 @@
 	</prerequisites>
 	<properties>
 		<target.jvm>1.9</target.jvm>
-		<junit.version>4.13.1</junit.version>
+		<junit.version>4.13.2</junit.version>
 	</properties>
 	<developers>
 		<developer>
