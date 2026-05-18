@@ -16,6 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    # works on JDK 11.. not 17 or greater
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
