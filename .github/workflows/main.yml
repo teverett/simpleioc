@@ -18,7 +18,7 @@ jobs:
 
     # works on JDK 11.. not 17 or greater
     - name: Set up JDK
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         distribution: 'adopt'
         java-version: 11
